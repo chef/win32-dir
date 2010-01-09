@@ -4,11 +4,10 @@
    junctions, i.e. symlinks for directories.
 
 = Installation
-   rake test (optional)
-   rake install (non-gem) or rake install_gem (gem).
+   gem install win32-dir
 
 = Synopsis
-   require "win32/dir"
+   require 'win32/dir'
 	
    # C:\WINNT or C:\WINDOWS
    puts Dir::WINDOWS
