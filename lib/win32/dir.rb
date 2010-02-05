@@ -35,7 +35,7 @@ class Dir
   # Dynamically set each of the CSIDL_ constants
   constants.grep(/CSIDL/).each{ |constant|
     path   = 0.chr * MAXPATH
-    nconst = constant.split('CSIDL_').last
+    nconst = constant.to_s.split('CSIDL_').last # to_s call for 1.9.x
       
     if SHGetFolderPath(0, const_get(constant), 0, 1, path) != 0
       path = nil
