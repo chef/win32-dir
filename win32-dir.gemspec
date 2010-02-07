@@ -9,13 +9,13 @@ Gem::Specification.new do |spec|
   spec.homepage  = 'http://www.rubyforge.org/projects/win32utils'
   spec.platform  = Gem::Platform::RUBY
   spec.summary   = 'Extra constants and methods for the Dir class on Windows.'
-  spec.test_file = 'test/test_dir.rb'
-  spec.files     = Dir['**/*'].reject{ |f| f.include?('CVS') }
+  spec.test_file = 'test/test_win32_dir.rb'
+  spec.files     = Dir['**/*'].reject{ |f| f.include?('git') }
 
   spec.rubyforge_project = 'win32utils'
   spec.extra_rdoc_files  = ['README', 'CHANGES', 'MANIFEST']
 
-  spec.add_dependency('windows-pr', '>= 0.9.3')
+  spec.add_dependency('windows-pr', '>= 1.0.9')
   spec.add_development_dependency('test-unit', '>= 2.0.6')
 
   spec.description = <<-EOF
