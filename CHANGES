@@ -1,3 +1,10 @@
+== 0.3.6 - 6-Feb-2010
+* Bug fixes for Ruby 1.9.x. Thanks go to Kendall Gifford for the spot and
+  the patch.
+* Minor refactoring of the Dir.create_junction method. This fixed a bug for
+  Ruby 1.9.x, but was also a little cleaner in general.
+* Some Rakefile task and gemspec updates.
+
 == 0.3.5 - 6-Aug-2009
 * Changed the license to Artistic 2.0.
 * Updated the gemspec, including the addition of a license attribute and
