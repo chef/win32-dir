@@ -37,12 +37,14 @@ class TC_Win32_Dir < Test::Unit::TestCase
 
   def test_create_junction_ascii
     assert_nothing_raised{ Dir.create_junction(@ascii_to, @@from) }
+    assert_true(File.exists?(@ascii_to))
     File.open(@test_file, 'w'){ |fh| fh.puts "Hello World" }
     assert_equal(Dir.entries(@@from), Dir.entries(@ascii_to))
   end
 
   def test_create_junction_unicode
     assert_nothing_raised{ Dir.create_junction(@unicode_to, @@from) }
+    assert_true(File.exists?(@unicode_to))
     File.open(@test_file, 'w'){ |fh| fh.puts "Hello World" }
     assert_equal(Dir.entries(@@from), Dir.entries(@unicode_to))
   end

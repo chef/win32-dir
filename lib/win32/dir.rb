@@ -101,8 +101,8 @@ class Dir
   #
   # Example:
   #
-  #    Dir.mkdir('C:\from')
-  #    Dir.create_junction('C:\to', 'C:\from')
+  #    Dir.mkdir('C:/from')
+  #    Dir.create_junction('C:/to', 'C:/from')
   # 
   def self.create_junction(to, from)
     to   = to.tr(File::SEPARATOR, File::ALT_SEPARATOR)   # Normalize path
@@ -112,17 +112,22 @@ class Dir
     from_path  = 0.chr * MAXPATH
     buf_target = 0.chr * MAXPATH
       
-    if GetFullPathName(from, from_path.size, from_path, 0) == 0
+    length = GetFullPathName(from, from_path.size, from_path, 0)
+
+    if length == 0
       raise StandardError, 'GetFullPathName() failed: ' + get_last_error
+    else
+      from_path = from_path[0..length-1]
     end
       
-    if GetFullPathName(to, to_path.size, to_path, 0) == 0
+    length = GetFullPathName(to, to_path.size, to_path, 0)
+
+    if length == 0
       raise StandardError, 'GetFullPathName() failed: ' + get_last_error
+    else
+      to_path = to_path[0..length-1]
     end
-      
-    to_path   = to_path.split(0.chr).first
-    from_path = from_path.split(0.chr).first
-      
+
     # You can create a junction to a directory that already exists, so
     # long as it's empty.
     rv = CreateDirectory(to_path, 0)
