@@ -28,7 +28,30 @@ class TC_Win32_Dir < Test::Unit::TestCase
   end
    
   def test_version
-    assert_equal('0.3.6', Dir::VERSION)
+    assert_equal('0.3.7', Dir::VERSION)
+  end
+
+  test 'glob handles backslashes' do
+    pattern = "C:\\Program Files\\Common Files\\System\\*.dll"
+    assert_nothing_raised{ Dir.glob(pattern) }
+    assert_true(Dir.glob(pattern).size > 0)
+  end
+
+  test 'glob still observes flags' do
+    assert_nothing_raised{ Dir.glob('*', File::FNM_DOTMATCH ) }
+    assert_true(Dir.glob('*', File::FNM_DOTMATCH).include?('.'))
+  end
+
+  test 'glob still honors block' do
+    array = []
+    assert_nothing_raised{ Dir.glob('*', File::FNM_DOTMATCH ){ |m| array << m } }
+    assert_true(array.include?('.'))
+  end
+
+  test 'ref handles backslashes' do
+    pattern = "C:\\Program Files\\Common Files\\System\\*.dll"
+    assert_nothing_raised{ Dir[pattern] }
+    assert_true(Dir[pattern].size > 0)
   end
   
   def test_create_junction_basic
