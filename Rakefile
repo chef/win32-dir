@@ -1,22 +1,15 @@
 require 'rake'
 require 'rake/testtask'
 
-desc "Install the win32-dir package (non-gem)"
-task :install do
-  dest = File.join(Config::CONFIG['sitelibdir'], 'win32')
-  Dir.mkdir(dest) unless File.exists? dest
-  cp 'lib/win32/dir.rb', dest, :verbose => true
-end
-
 namespace 'gem' do
-  desc "Build the gem"
+  desc "Create the win32-dir gem"
   task :build do
     Dir["*.gem"].each{ |f| File.delete(f) }
     spec = eval(IO.read('win32-dir.gemspec'))
     Gem::Builder.new(spec).build
   end
   
-  desc "Install the win32-dir package as a gem"
+  desc "Install the win32-dir gem"
   task :install => [:build] do
     file = Dir["*.gem"].first
     sh "gem install #{file}"
