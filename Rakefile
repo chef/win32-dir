@@ -1,9 +1,12 @@
 require 'rake'
+require 'rake/clean'
 require 'rake/testtask'
+
+CLEAN.include('**/*.gem')
 
 namespace 'gem' do
   desc "Create the win32-dir gem"
-  task :build do
+  task :build => [:clean] do
     Dir["*.gem"].each{ |f| File.delete(f) }
     spec = eval(IO.read('win32-dir.gemspec'))
     Gem::Builder.new(spec).build
@@ -25,3 +28,5 @@ Rake::TestTask.new do |t|
   t.warning = true
   t.verbose = true
 end
+
+task :default => :test
