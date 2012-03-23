@@ -30,7 +30,7 @@ class Dir
   extend Windows::SystemInfo
    
   # The version of the win32-dir library.
-  VERSION = '0.3.6'
+  VERSION = '0.3.7'
    
   # Dynamically set each of the CSIDL_ constants
   constants.grep(/CSIDL/).each{ |constant|
@@ -67,6 +67,26 @@ class Dir
   class << self
     remove_method :getwd
     remove_method :pwd
+    alias :old_glob :glob
+    alias :old_ref :[]
+    remove_method :glob
+    remove_method :[]
+  end
+
+  # Same as the standard MRI Dir.glob method except that it handles
+  # backslashes in path names.
+  #
+  def self.glob(glob_pattern, flags = 0, &block)
+    glob_pattern = glob_pattern.tr("\\", "/") 
+    old_glob(glob_pattern, flags, &block)
+  end
+
+  # Same as the standard MRI Dir[] method except that it handles
+  # backslashes in path names.
+  #
+  def self.[](glob_pattern)
+    glob_pattern = glob_pattern.tr("\\", "/") 
+    old_ref(glob_pattern)
   end
    
   # Returns the present working directory. Unlike MRI, this method always

@@ -1,3 +1,8 @@
+== 0.3.7 - 18-Jul-2010
+* Modified Dir.glob and Dir[] to handle backslashes in path names.
+* Added tests for the modified Dir.glob and Dir[] behavior.
+* Removed the old non-gem install Rake task.
+
 == 0.3.6 - 6-Feb-2010
 * Bug fixes for Ruby 1.9.x. Thanks go to Kendall Gifford for the spot and
   the patch.
