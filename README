@@ -237,8 +237,8 @@ Dir::TEMPLATES
   the directory and junction fine, but the +to+ name appears to get garbled
   with regards to the character set.
 	
-  Please log any other bug reports on the RubyForge project page at
-  http://www.rubyforge.net/projects/win32utils.
+  Please log any other bug reports on the project page at
+  http://www.github.com/djberg96/win32-dir
 
 == Future Plans
   Fix the Unicode issue with Dir.create_junction.
@@ -258,7 +258,7 @@ Dir::TEMPLATES
   Artistic 2.0
     
 == Copyright
-  (C) 2003-2010 Daniel J. Berger, All Rights Reserved
+  (C) 2003-2012 Daniel J. Berger, All Rights Reserved
     
 == Warranty
   This package is provided "as is" and without any express or
