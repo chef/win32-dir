@@ -19,6 +19,10 @@ class Dir
   attach_function :SHGetFolderLocation, [:hwnd, :int, :handle, :dword, :pointer], :hresult
   attach_function :SHGetFileInfo, [:ulong, :dword, :pointer, :uint, :uint], :ulong
 
+  ffi_lib :shlwapi
+
+  attach_function :PathIsDirectoryEmptyW, [:buffer_in], :bool
+
   # CSIDL constants
   csidl = Hash[
     'DESKTOP',                  0x0000,
@@ -93,7 +97,7 @@ class Dir
   csidl.each{ |key, value|
     buf  = 0.chr * 1024
     path = nil
-    buf.encode!("UTF-16LE")
+    buf.encode!('UTF-16LE')
 
     if SHGetFolderPathW(0, value, 0, 0, buf) == 0
       path = buf.strip
@@ -112,38 +116,11 @@ class Dir
     Dir.const_set(key, path) if path
   }
 
-=begin
-  constants.grep(/CSIDL/).each{ |constant|
-    path   = 0.chr * MAXPATH
-    nconst = constant.to_s.split('CSIDL_').last # to_s call for 1.9.x
-
-    if SHGetFolderPath(0, const_get(constant), 0, 1, path) != 0
-      path = nil
-    else
-      path.strip!
-    end
-
-    # Try another approach for virtual folders
-    if path.nil?
-      ppidl = 0.chr * 4 # PIDLIST_ABSOLUTE
-
-      if SHGetFolderLocation(0, const_get(constant), 0, 0, ppidl) == S_OK
-        info = 0.chr * 692 # sizeof(SHFILEINFO)
-        flags = SHGFI_DISPLAYNAME | SHGFI_PIDL
-        SHGetFileInfo(ppidl.unpack('L')[0], 0, info, 692, flags)
-        path = info[12..-1].strip
-      end
-    end
-
-    Dir.const_set(nconst, path) if path
-  }
-
   # Set Dir::MYDOCUMENTS to the same as Dir::PERSONAL if undefined
   unless defined? MYDOCUMENTS
     # Same as Dir::PERSONAL
     MYDOCUMENTS = PERSONAL
   end
-=end
 
 =begin
   class << self
@@ -293,14 +270,18 @@ class Dir
 
     self
   end
+=end
 
   # Returns whether or not +path+ is empty.  Returns false if +path+ is not
   # a directory, or contains any files other than '.' or '..'.
   #
   def self.empty?(path)
-    PathIsDirectoryEmpty(path)
+    path = path << "\0"
+    path = path.encode('UTF-16LE')
+    PathIsDirectoryEmptyW(path)
   end
 
+=begin
   # Returns whether or not +path+ is a junction.
   #
   def self.junction?(path)
