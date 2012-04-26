@@ -203,7 +203,7 @@ class Dir
         raise SystemCallError, GetLastError(), "GetLongPathNameW"
       end
 
-      path3.strip
+      path3.strip.encode(Encoding.default_external)
     end
 
     alias :pwd :getwd
