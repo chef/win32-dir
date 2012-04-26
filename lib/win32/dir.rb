@@ -147,7 +147,6 @@ class Dir
 
   # Set Dir::MYDOCUMENTS to the same as Dir::PERSONAL if undefined
   unless defined? MYDOCUMENTS
-    # Same as Dir::PERSONAL
     MYDOCUMENTS = PERSONAL
   end
 
@@ -247,10 +246,11 @@ class Dir
 
     # You can create a junction to a directory that already exists, so
     # long as it's empty.
-    rv = CreateDirectoryW(to_path, nil)
+    bool  = CreateDirectoryW(to_path, nil)
+    error = GetLastError()
 
-    if rv == 0 && rv != 183 # ERROR_ALREADY_EXISTS
-      raise SystemCallError, GetLastError(), "CreateDirectoryW"
+    if !bool && error != 183 # ERROR_ALREADY_EXISTS
+      raise SystemCallError, error, "CreateDirectoryW"
     end
 
     begin
