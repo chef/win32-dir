@@ -3,7 +3,7 @@ require 'ffi'
 module Dir::Structs
   extend FFI::Library
 
-class SHFILEINFO < FFI::Struct
+  class SHFILEINFO < FFI::Struct
     layout(
       :hIcon, :ulong,
       :iIcon, :int,
