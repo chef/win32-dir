@@ -83,7 +83,7 @@ class Dir
 
       if SHGetFolderLocation(0, value, 0, 0, ptr) == 0
         if SHGetFileInfo(ptr.read_long, 0, info, info.size, flags) != 0
-          path = info[:szDisplayName]
+          path = info[:szDisplayName].to_s
         end
       end
     end
@@ -97,6 +97,7 @@ class Dir
   end
 
   class << self
+    alias old_glob glob
 
     # Same as the standard MRI Dir.glob method except that it handles
     # backslashes in path names.
@@ -106,13 +107,18 @@ class Dir
       old_glob(glob_pattern, flags, &block)
     end
 
+    alias old_ref []
+
     # Same as the standard MRI Dir[] method except that it handles
     # backslashes in path names.
     #
-    def self.[](glob_pattern)
+    def [](glob_pattern)
       glob_pattern = glob_pattern.tr("\\", "/")
       old_ref(glob_pattern)
     end
+
+    alias oldgetwd getwd
+    alias oldpwd pwd
 
     # Returns the present working directory. Unlike MRI, this method always
     # normalizes the path.
