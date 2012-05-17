@@ -172,23 +172,23 @@ class Dir
     to   = to.tr(File::SEPARATOR, File::ALT_SEPARATOR)   # Normalize path
     from = from.tr(File::SEPARATOR, File::ALT_SEPARATOR) # Normalize path
 
-    to_path    = 0.chr * 1024
-    from_path  = 0.chr * 1024
-    buf_target = 0.chr * 1024
-
+    from_path = 0.chr * 1024
+    from.encode!("UTF-16LE")
     from_path.encode!('UTF-16LE')
 
-    length = GetFullPathNameW(from.encode('UTF-16LE'), from_path.size, from_path, nil)
+    length = GetFullPathNameW(from, from_path.size, from_path, nil)
 
     if length == 0
-      raise SystemCallError, GetLastError(), "GetFullPathNameW"
+      raise SystemCallError, FFI.errno, "GetFullPathNameW"
     else
       from_path.strip!
     end
 
+    to_path = 0.chr * 1024
+    to.encode!('UTF-16LE')
     to_path.encode!('UTF-16LE')
 
-    length = GetFullPathNameW(to.encode('UTF-16LE'), to_path.size, to_path, nil)
+    length = GetFullPathNameW(to, to_path.size, to_path, nil)
 
     if length == 0
       raise SystemCallError, GetLastError(), "GetFullPathNameW"
@@ -198,11 +198,10 @@ class Dir
 
     # You can create a junction to a directory that already exists, so
     # long as it's empty.
-    bool  = CreateDirectoryW(to_path, nil)
-    error = GetLastError()
-
-    if !bool && error != 183 # ERROR_ALREADY_EXISTS
-      raise SystemCallError, error, "CreateDirectoryW"
+    unless CreateDirectoryW(to_path, nil)
+      if FFI.errno != 183
+        raise SystemCallError, FFI.errno, "CreateDirectoryW"
+      end
     end
 
     begin
@@ -213,7 +212,9 @@ class Dir
         raise SystemCallError, GetLastError(), "CreateFileW"
       end
 
-      target = "\\??\\".encode('UTF-16LE') << from_path
+      target = "\\??\\".encode('UTF-16LE') + from_path
+      char_pointer = FFI::MemoryPointer.new(:buffer_in, target.size)
+      char_pointer.write_string(target)
 
       rdb = REPARSE_JDATA_BUFFER.new
       rdb[:ReparseTag] = 2684354563 # IO_REPARSE_TAG_MOUNT_POINT
@@ -223,7 +224,7 @@ class Dir
       rdb[:SubstituteNameLength] = target.size
       rdb[:PrintNameOffset] = target.size + 2
       rdb[:PrintNameLength] = 0
-      rdb[:PathBuffer] = FFI::MemoryPointer.from_string(target)
+      rdb[:PathBuffer] = char_pointer
 
       bytes = FFI::MemoryPointer.new(:ulong)
 
