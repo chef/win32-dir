@@ -256,7 +256,7 @@ class Dir
   # a directory, or contains any files other than '.' or '..'.
   #
   def self.empty?(path)
-    path = path << "\0"
+    path = path + "\0"
     path = path.encode('UTF-16LE')
     PathIsDirectoryEmptyW(path)
   end
