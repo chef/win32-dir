@@ -1,8 +1,10 @@
+require File.join(File.dirname(File.expand_path(__FILE__)), 'dir', 'constants')
 require File.join(File.dirname(File.expand_path(__FILE__)), 'dir', 'functions')
 require File.join(File.dirname(File.expand_path(__FILE__)), 'dir', 'structs')
 
 class Dir
   include Dir::Structs
+  include Dir::Constants
   extend Dir::Functions
 
   # The version of the win32-dir library.
@@ -79,7 +81,7 @@ class Dir
     else
       ptr   = FFI::MemoryPointer.new(:long)
       info  = SHFILEINFO.new
-      flags = 520 # SHGFI_DISPLAYNAME | SHGFI_PIDL
+      flags = SHGFI_DISPLAYNAME | SHGFI_PIDL
 
       if SHGetFolderLocation(0, value, 0, 0, ptr) == 0
         if SHGetFileInfo(ptr.read_long, 0, info, info.size, flags) != 0
@@ -139,19 +141,19 @@ class Dir
       path1.encode!('UTF-16LE')
 
       if GetCurrentDirectoryW(path1.size, path1) == 0
-        raise SystemCallError, GetLastError(), "GetCurrentDirectoryW"
+        raise SystemCallError, FFI.errno, "GetCurrentDirectoryW"
       end
 
       path2.encode!('UTF-16LE')
 
       if GetShortPathNameW(path1, path2, path2.size) == 0
-        raise SystemCallError, GetLastError(), "GetShortPathNameW"
+        raise SystemCallError, FFi.errno, "GetShortPathNameW"
       end
 
       path3.encode!('UTF-16LE')
 
       if GetLongPathNameW(path2, path3, path3.size) == 0
-        raise SystemCallError, GetLastError(), "GetLongPathNameW"
+        raise SystemCallError, FFI.errno, "GetLongPathNameW"
       end
 
       path3.strip.encode(Encoding.default_external)
@@ -191,7 +193,7 @@ class Dir
     length = GetFullPathNameW(to, to_path.size, to_path, nil)
 
     if length == 0
-      raise SystemCallError, GetLastError(), "GetFullPathNameW"
+      raise SystemCallError, FFI.errno, "GetFullPathNameW"
     else
       to_path.strip!
     end
@@ -199,17 +201,25 @@ class Dir
     # You can create a junction to a directory that already exists, so
     # long as it's empty.
     unless CreateDirectoryW(to_path, nil)
-      if FFI.errno != 183
+      if FFI.errno != ERROR_ALREADY_EXISTS
         raise SystemCallError, FFI.errno, "CreateDirectoryW"
       end
     end
 
     begin
       # Generic read & write + open existing + reparse point & backup semantics
-      handle = CreateFileW(to_path, 3221225472, 0, nil, 3, 35651584, 0)
+      handle = CreateFileW(
+        to_path,
+        GENERIC_READ | GENERIC_WRITE,
+        0,
+        nil,
+        OPEN_EXISTING,
+        FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS,
+        0
+      )
 
-      if handle == 0xFFFFFFFF # INVALID_HANDLE_VALUE
-        raise SystemCallError, GetLastError(), "CreateFileW"
+      if handle == INVALID_HANDLE_VALUE
+        raise SystemCallError, FFI.errno, "CreateFileW"
       end
 
       target = "\\??\\".encode('UTF-16LE') + from_path
@@ -231,7 +241,7 @@ class Dir
       begin
         bool = DeviceIoControl(
           handle,
-          CTL_CODE(9, 41, 0, 0),
+          CTL_CODE(FILE_DEVICE_FILE_SYSTEM, 41, METHOD_BUFFERED, 0),
           rdb,
           rdb.size,
           nil,
@@ -272,7 +282,10 @@ class Dir
     attrib = GetFileAttributesW(path)
 
     # Only directories with a reparse point attribute can be junctions
-    if (attrib == 0xFFFFFFFF) || (attrib & 0x00000010 == 0) || (attrib & 0x00000400 == 0)
+    if attrib == INVALID_FILE_ATTRIBUTES ||
+       attrib & FILE_ATTRIBUTE_DIRECTORY == 0 ||
+       attrib & FILE_ATTRIBUTE_REPARSE_POINT == 0
+    then
       bool = false
     end
 
