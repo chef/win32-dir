@@ -171,11 +171,13 @@ class Dir
   #    Dir.create_junction('C:/to', 'C:/from')
   #
   def self.create_junction(to, from)
-    to   = to.tr(File::SEPARATOR, File::ALT_SEPARATOR)   # Normalize path
-    from = from.tr(File::SEPARATOR, File::ALT_SEPARATOR) # Normalize path
+    to   = to.tr(File::SEPARATOR, File::ALT_SEPARATOR) + "\0"   # Normalize path
+    from = from.tr(File::SEPARATOR, File::ALT_SEPARATOR) + "\0" # Normalize path
+
+    to.encode!('UTF-16LE')
+    from.encode!('UTF-16LE')
 
     from_path = 0.chr * 1024
-    from.encode!("UTF-16LE")
     from_path.encode!('UTF-16LE')
 
     length = GetFullPathNameW(from, from_path.size, from_path, nil)
@@ -223,18 +225,16 @@ class Dir
       end
 
       target = "\\??\\".encode('UTF-16LE') + from_path
-      char_pointer = FFI::MemoryPointer.new(:buffer_in, target.size)
-      char_pointer.write_string(target)
 
       rdb = REPARSE_JDATA_BUFFER.new
       rdb[:ReparseTag] = 2684354563 # IO_REPARSE_TAG_MOUNT_POINT
-      rdb[:ReparseDataLength] = target.size + 12
+      rdb[:ReparseDataLength] = target.bytesize + 12
       rdb[:Reserved] = 0
       rdb[:SubstituteNameOffset] = 0
-      rdb[:SubstituteNameLength] = target.size
-      rdb[:PrintNameOffset] = target.size + 2
+      rdb[:SubstituteNameLength] = target.bytesize
+      rdb[:PrintNameOffset] = target.bytesize + 2
       rdb[:PrintNameLength] = 0
-      rdb[:PathBuffer] = char_pointer
+      rdb[:PathBuffer] = target
 
       bytes = FFI::MemoryPointer.new(:ulong)
 
@@ -243,15 +243,16 @@ class Dir
           handle,
           CTL_CODE(FILE_DEVICE_FILE_SYSTEM, 41, METHOD_BUFFERED, 0),
           rdb,
-          rdb.size,
+          rdb[:ReparseDataLength] + 8,
           nil,
           0,
           bytes,
           nil
         )
 
+        error = FFI.errno
+
         unless bool
-          error = GetLastError()
           RemoveDirectoryW(to_path)
           raise SystemCallError, error, "DeviceIoControl"
         end

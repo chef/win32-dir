@@ -23,7 +23,7 @@ module Dir::Structs
       :SubstituteNameLength, :ushort,
       :PrintNameOffset, :ushort,
       :PrintNameLength, :ushort,
-      :PathBuffer, :pointer
+      :PathBuffer, [:char, 1024]
     )
   end
 end
