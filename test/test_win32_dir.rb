@@ -50,38 +50,35 @@ class TC_Win32_Dir < Test::Unit::TestCase
     assert_true(Dir[pattern].size > 0)
   end
 
-=begin
-
-  def test_create_junction_basic
+  test "create_junction basic functionality" do
     assert_respond_to(Dir, :create_junction)
   end
 
-  def test_create_junction_ascii
+  test "create_junction works as expected with ascii characters" do
     assert_nothing_raised{ Dir.create_junction(@ascii_to, @@from) }
     assert_true(File.exists?(@ascii_to))
     File.open(@test_file, 'w'){ |fh| fh.puts "Hello World" }
     assert_equal(Dir.entries(@@from), Dir.entries(@ascii_to))
   end
 
-  def test_create_junction_unicode
+  test "create_junction works as expected with unicode characters" do
     assert_nothing_raised{ Dir.create_junction(@unicode_to, @@from) }
     assert_true(File.exists?(@unicode_to))
     File.open(@test_file, 'w'){ |fh| fh.puts "Hello World" }
     assert_equal(Dir.entries(@@from), Dir.entries(@unicode_to))
   end
 
-  def test_is_junction
+  test "junction? method returns boolean value" do
     assert_respond_to(Dir, :junction?)
     assert_nothing_raised{ Dir.create_junction(@ascii_to, @@from) }
-    assert_equal(false, Dir.junction?(@@from))
-    assert_equal(true, Dir.junction?(@ascii_to))
+    assert_false(Dir.junction?(@@from))
+    assert_true(Dir.junction?(@ascii_to))
   end
 
-  def test_reparse_dir_alias
-    assert_respond_to(Dir, :reparse_dir?) # alias
-    assert_equal(true, Dir.method(:reparse_dir?) == Dir.method(:junction?))
+  test "reparse_dir? is an aliase for junction?" do
+    assert_respond_to(Dir, :reparse_dir?)
+    assert_true(Dir.method(:reparse_dir?) == Dir.method(:junction?))
   end
-=end
 
   test "empty? method returns expected result" do
     assert_respond_to(Dir, :empty?)
