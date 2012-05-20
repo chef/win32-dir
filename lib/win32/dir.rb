@@ -277,7 +277,7 @@ class Dir
   #
   def self.junction?(path)
     bool = true
-    path = path << "\0"
+    path = path + "\0"
     path.encode!('UTF-16LE')
 
     attrib = GetFileAttributesW(path)
