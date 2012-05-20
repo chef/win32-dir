@@ -2,7 +2,7 @@ require 'rake'
 require 'rake/clean'
 require 'rake/testtask'
 
-CLEAN.include('**/*.gem')
+CLEAN.include('**/*.gem', '**/*.log')
 
 namespace 'gem' do
   desc "Create the win32-dir gem"
