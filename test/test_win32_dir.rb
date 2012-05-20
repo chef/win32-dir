@@ -13,11 +13,11 @@ class TC_Win32_Dir < Test::Unit::TestCase
   def self.startup
     @@test_home = File.dirname(File.expand_path(__FILE__))
     @@from = File.join(@@test_home, "test_from_directory")
+    Dir.chdir(@@test_home)
     Dir.mkdir(@@from)
   end
 
   def setup
-    Dir.chdir(@@test_home) unless File.basename(Dir.pwd) == 'test'
     @ascii_to   = "test_to_directory"
     @unicode_to = "Ελλάσ" # Greek - the word is 'Hellas'
     @test_file  = File.join(@@from, "test.txt")
