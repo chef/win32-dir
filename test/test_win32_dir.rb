@@ -7,19 +7,20 @@
 ###########################################################################
 require 'test-unit'
 require 'win32/dir'
+require 'tmpdir'
 require 'fileutils'
 
 class TC_Win32_Dir < Test::Unit::TestCase
   def self.startup
-    @@test_home = File.dirname(File.expand_path(__FILE__))
-    @@from = File.join(@@test_home, "test_from_directory")
-    Dir.chdir(@@test_home)
+    @@temp = Dir.tmpdir
+    @@from = File.join(@@temp, "test_from_directory")
     Dir.mkdir(@@from)
   end
 
   def setup
-    @ascii_to   = "test_to_directory"
-    @unicode_to = "Ελλάσ" # Greek - the word is 'Hellas'
+    @ascii_to   = File.join(@@temp, "test_to_directory")
+    p @ascii_to
+    @unicode_to = File.join(@@temp, "Ελλάσ")
     @test_file  = File.join(@@from, "test.txt")
   end
 
