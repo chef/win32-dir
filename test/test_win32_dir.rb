@@ -19,7 +19,6 @@ class TC_Win32_Dir < Test::Unit::TestCase
 
   def setup
     @ascii_to   = File.join(@@temp, "test_to_directory")
-    p @ascii_to
     @unicode_to = File.join(@@temp, "Ελλάσ")
     @test_file  = File.join(@@from, "test.txt")
   end
