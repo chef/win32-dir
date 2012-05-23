@@ -76,7 +76,9 @@ class Dir
     path = nil
     buf.encode!('UTF-16LE')
 
-    if SHGetFolderPathW(0, value, 0, 0, buf) == 0
+    if SHGetFolderPathW(0, value, 0, 0, buf) == 0 # Current path
+      path = buf.strip
+    elsif SHGetFolderPathW(0, value, 0, 1, buf) == 0 # Default path
       path = buf.strip
     else
       ptr   = FFI::MemoryPointer.new(:long)
