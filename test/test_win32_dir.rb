@@ -12,6 +12,7 @@ require 'fileutils'
 
 class TC_Win32_Dir < Test::Unit::TestCase
   def self.startup
+    @@java = RUBY_PLATFORM == 'java'
     @@temp = Dir.tmpdir
     @@from = File.join(@@temp, "test_from_directory")
     Dir.mkdir(@@from)
@@ -87,32 +88,38 @@ class TC_Win32_Dir < Test::Unit::TestCase
   end
 
   test "pwd basic functionality" do
+    omit_if(@@java)
     assert_respond_to(Dir, :pwd)
     assert_nothing_raised{ Dir.pwd }
     assert_kind_of(String, Dir.pwd)
   end
 
   test "pwd returns full path even if short path was just used" do
+    omit_if(@@java)
     Dir.chdir("C:\\Progra~1")
     assert_equal("C:\\Program Files", Dir.pwd)
   end
 
   test "pwd returns full path if long path was just used" do
+    omit_if(@@java)
     Dir.chdir("C:\\Program Files")
     assert_equal("C:\\Program Files", Dir.pwd)
   end
 
   test "pwd uses standard case conventions" do
+    omit_if(@@java)
     Dir.chdir("C:\\PROGRAM FILES")
     assert_equal("C:\\Program Files", Dir.pwd)
   end
 
   test "pwd converts forward slashes to backslashes" do
+    omit_if(@@java)
     Dir.chdir("C:/Program Files")
     assert_equal("C:\\Program Files", Dir.pwd)
   end
 
   test "pwd and getwd are aliases" do
+    omit_if(@@java)
     assert_true(Dir.method(:getwd) == Dir.method(:pwd))
   end
 

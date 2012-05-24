@@ -121,47 +121,49 @@ class Dir
       old_ref(glob_pattern)
     end
 
-    alias oldgetwd getwd
-    alias oldpwd pwd
+    unless RUBY_PLATFORM == 'java'
+      alias oldgetwd getwd
+      alias oldpwd pwd
 
-    # Returns the present working directory. Unlike MRI, this method always
-    # normalizes the path.
-    #
-    # Examples:
-    #
-    #    Dir.chdir("C:/Progra~1")
-    #    Dir.getwd # => C:\Program Files
-    #
-    #    Dir.chdir("C:/PROGRAM FILES")
-    #    Dir.getwd # => C:\Program Files
-    #
-    def getwd
-      path1 = 0.chr * 1024
-      path2 = 0.chr * 1024
-      path3 = 0.chr * 1024
+      # Returns the present working directory. Unlike MRI, this method always
+      # normalizes the path.
+      #
+      # Examples:
+      #
+      #    Dir.chdir("C:/Progra~1")
+      #    Dir.getwd # => C:\Program Files
+      #
+      #    Dir.chdir("C:/PROGRAM FILES")
+      #    Dir.getwd # => C:\Program Files
+      #
+      def getwd
+        path1 = 0.chr * 1024
+        path2 = 0.chr * 1024
+        path3 = 0.chr * 1024
 
-      path1.encode!('UTF-16LE')
+        path1.encode!('UTF-16LE')
 
-      if GetCurrentDirectoryW(path1.size, path1) == 0
-        raise SystemCallError, FFI.errno, "GetCurrentDirectoryW"
+        if GetCurrentDirectoryW(path1.size, path1) == 0
+          raise SystemCallError, FFI.errno, "GetCurrentDirectoryW"
+        end
+
+        path2.encode!('UTF-16LE')
+
+        if GetShortPathNameW(path1, path2, path2.size) == 0
+          raise SystemCallError, FFi.errno, "GetShortPathNameW"
+        end
+
+        path3.encode!('UTF-16LE')
+
+        if GetLongPathNameW(path2, path3, path3.size) == 0
+          raise SystemCallError, FFI.errno, "GetLongPathNameW"
+        end
+
+        path3.strip.encode(Encoding.default_external)
       end
 
-      path2.encode!('UTF-16LE')
-
-      if GetShortPathNameW(path1, path2, path2.size) == 0
-        raise SystemCallError, FFi.errno, "GetShortPathNameW"
-      end
-
-      path3.encode!('UTF-16LE')
-
-      if GetLongPathNameW(path2, path3, path3.size) == 0
-        raise SystemCallError, FFI.errno, "GetLongPathNameW"
-      end
-
-      path3.strip.encode(Encoding.default_external)
+      alias :pwd :getwd
     end
-
-    alias :pwd :getwd
   end
 
   # Creates the symlink +to+, linked to the existing directory +from+. If the
