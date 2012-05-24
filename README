@@ -233,16 +233,11 @@ Dir::TEMPLATES
   only instead of an actual path.
 	
 == Known Bugs
-  The Unicode support is not quite there for Dir.create_junction. It creates
-  the directory and junction fine, but the +to+ name appears to get garbled
-  with regards to the character set.
-	
-  Please log any other bug reports on the project page at
+  Please log any bug reports on the project page at
   http://www.github.com/djberg96/win32-dir
 
 == Future Plans
-  Fix the Unicode issue with Dir.create_junction.
-  Other suggestions welcome.
+  Suggestions welcome.
 
 == Acknowledgements
   Shashank Date and Zach Dennis for the suggestion and supporting comments
