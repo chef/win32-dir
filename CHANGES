@@ -1,3 +1,8 @@
+== 0.4.0 - ???
+* Conversion to FFI. Should work with JRuby now.
+* If current versions of Dir::XXX constant values cannot be found
+  then default values are tried.
+
 == 0.3.7 - 18-Jul-2010
 * Modified Dir.glob and Dir[] to handle backslashes in path names.
 * Added tests for the modified Dir.glob and Dir[] behavior.
