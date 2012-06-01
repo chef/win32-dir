@@ -1,8 +1,13 @@
+# Necessary to force JRuby to use the gem, not its builtin version
+if RUBY_PLATFORM == 'java'
+  require 'rubygems'
+  gem 'ffi'
+end
+
 require 'ffi'
 
 module Dir::Functions
   extend FFI::Library
-  ffi_convention :stdcall
 
   ffi_lib :shell32
 
