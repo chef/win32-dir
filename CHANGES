@@ -1,4 +1,4 @@
-== 0.4.0 - ???
+== 0.4.0 - 29-Jun-2012
 * Conversion to FFI. Should work with JRuby now.
 * If current versions of Dir::XXX constant values cannot be found
   then default values are tried.
