@@ -368,6 +368,10 @@ class TC_Win32_Dir < Test::Unit::TestCase
     assert_kind_of(String, Dir::WINDOWS)
   end
 
+  test "ffi functions are private" do
+    assert_not_respond_to(Dir, :SHGetFolderPathW)
+  end
+
   def teardown
     FileUtils.rm_rf(@ascii_to)
     FileUtils.rm_rf(@unicode_to)
