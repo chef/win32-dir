@@ -139,6 +139,7 @@ class Dir
       old_ref(glob_pattern)
     end
 
+    # JRuby normalizes the path by default.
     unless RUBY_PLATFORM == 'java'
       alias oldgetwd getwd
       alias oldpwd pwd
@@ -323,6 +324,7 @@ class Dir
 
   private
 
+  # Macro from Windows header file, used by the create_junction method.
   def self.CTL_CODE(device, function, method, access)
     ((device) << 16) | ((access) << 14) | ((function) << 2) | (method)
   end
