@@ -69,6 +69,18 @@ class TC_Win32_Dir < Test::Unit::TestCase
     assert_equal(Dir.entries(@@from), Dir.entries(@unicode_to))
   end
 
+  test "read_junction works as expected with ascii characters" do
+    assert_nothing_raised{ Dir.create_junction(@ascii_to, @@from) }
+    assert_true(File.exists?(@ascii_to))
+    assert_equal(Dir.read_junction(@ascii_to), @@from.bytes.to_a.pack('C*').encode("UTF-16LE"))
+  end
+
+  test "read_junction works as expected with unicode characters" do
+    assert_nothing_raised{ Dir.create_junction(@unicode_to, @@from) }
+    assert_true(File.exists?(@unicode_to))
+    assert_equal(Dir.read_junction(@unicode_to), @@from.bytes.to_a.pack('C*').encode("UTF-16LE"))
+  end
+
   test "junction? method returns boolean value" do
     assert_respond_to(Dir, :junction?)
     assert_nothing_raised{ Dir.create_junction(@ascii_to, @@from) }
