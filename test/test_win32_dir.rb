@@ -24,8 +24,8 @@ class TC_Win32_Dir < Test::Unit::TestCase
     @test_file  = File.join(@@from, "test.txt")
   end
 
-  def test_version
-    assert_equal('0.4.0', Dir::VERSION)
+  test "version number is set to expected value" do
+    assert_equal('0.4.1', Dir::VERSION)
   end
 
   test 'glob handles backslashes' do

@@ -26,7 +26,7 @@ class Dir
   )
 
   # The version of the win32-dir library.
-  VERSION = '0.4.0'
+  VERSION = '0.4.1'
 
   # CSIDL constants
   csidl = Hash[
@@ -286,11 +286,6 @@ class Dir
 
     self
   end
-
-  #define FSCTL_SET_REPARSE_POINT		   CTL_CODE(FILE_DEVICE_FILE_SYSTEM,  41, METHOD_BUFFERED, FILE_SPECIAL_ACCESS)
-  #define FSCTL_GET_REPARSE_POINT		   CTL_CODE(FILE_DEVICE_FILE_SYSTEM,  42, METHOD_BUFFERED, FILE_ANY_ACCESS)
-  #define FSCTL_DELETE_REPARSE_POINT		   CTL_CODE(FILE_DEVICE_FILE_SYSTEM,  43, METHOD_BUFFERED, FILE_SPECIAL_ACCESS)
-
 
   # Returns the+ +path+ that a given +symlink+ points to.
   # Raises +ENOENT+ if given path does not exist, returns +false+
