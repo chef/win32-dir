@@ -163,19 +163,19 @@ class Dir
         path1.encode!('UTF-16LE')
 
         if GetCurrentDirectoryW(path1.size, path1) == 0
-          raise SystemCallError, FFI.errno, "GetCurrentDirectoryW"
+          raise SystemCallError.new("GetCurrentDirectoryW", FFI.errno)
         end
 
         path2.encode!('UTF-16LE')
 
         if GetShortPathNameW(path1, path2, path2.size) == 0
-          raise SystemCallError, FFi.errno, "GetShortPathNameW"
+          raise SystemCallError.new("GetShortPathNameW", FFI.errno)
         end
 
         path3.encode!('UTF-16LE')
 
         if GetLongPathNameW(path2, path3, path3.size) == 0
-          raise SystemCallError, FFI.errno, "GetLongPathNameW"
+          raise SystemCallError.new("GetLongPathNameW", FFI.errno)
         end
 
         path3.strip.encode(Encoding.default_external)
@@ -206,7 +206,7 @@ class Dir
     length = GetFullPathNameW(from, from_path.size, from_path, nil)
 
     if length == 0
-      raise SystemCallError, FFI.errno, "GetFullPathNameW"
+      raise SystemCallError.new("GetFullPathNameW", FFI.errno)
     else
       from_path.strip!
     end
@@ -218,7 +218,7 @@ class Dir
     length = GetFullPathNameW(to, to_path.size, to_path, nil)
 
     if length == 0
-      raise SystemCallError, FFI.errno, "GetFullPathNameW"
+      raise SystemCallError.new("GetFullPathNameW", FFI.errno)
     else
       to_path.strip!
     end
@@ -227,7 +227,7 @@ class Dir
     # long as it's empty.
     unless CreateDirectoryW(to_path, nil)
       if FFI.errno != ERROR_ALREADY_EXISTS
-        raise SystemCallError, FFI.errno, "CreateDirectoryW"
+        raise SystemCallError.new("CreateDirectoryW", FFI.errno)
       end
     end
 
@@ -244,7 +244,7 @@ class Dir
       )
 
       if handle == INVALID_HANDLE_VALUE
-        raise SystemCallError, FFI.errno, "CreateFileW"
+        raise SystemCallError.new("CreateFileW", FFI.errno)
       end
 
       target = "\\??\\".encode('UTF-16LE') + from_path
@@ -277,7 +277,7 @@ class Dir
 
         unless bool
           RemoveDirectoryW(to_path)
-          raise SystemCallError, error, "DeviceIoControl"
+          raise SystemCallError.new("DeviceIoControl", error)
         end
       ensure
         CloseHandle(handle)
@@ -299,11 +299,11 @@ class Dir
   #
   #    Dir.mkdir('C:/from')
   #    Dir.create_junction('C:/to', 'C:/from')
-  #    Dir.read_junction("c:/to")			     => "c:/from"
+  #    Dir.read_junction("c:/to")          => "c:/from"
   #
   def self.read_junction(junction)
     return false unless Dir.junction?(junction)
-    junction   = junction.tr(File::SEPARATOR, File::ALT_SEPARATOR) + "\0"   # Normalize path
+    junction = junction.tr(File::SEPARATOR, File::ALT_SEPARATOR) + "\0"  # Normalize path
 
     junction.encode!('UTF-16LE')
     junction_path = 0.chr * 1024
@@ -312,7 +312,7 @@ class Dir
     length = GetFullPathNameW(junction, junction_path.size, junction_path, nil)
 
     if length == 0
-      raise SystemCallError, FFI.errno, "GetFullPathNameW"
+      raise SystemCallError.new("GetFullPathNameW", FFI.errno)
     else
       junction_path.strip!
     end
@@ -321,16 +321,16 @@ class Dir
       # Generic read & write + open existing + reparse point & backup semantics
       handle = CreateFileW(
         junction_path,
-	GENERIC_READ | GENERIC_WRITE,
-	0,
-	nil,
-	OPEN_EXISTING,
+        GENERIC_READ | GENERIC_WRITE,
+        0,
+        nil,
+        OPEN_EXISTING,
         FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS,
-	0
+        0
       )
 
       if handle == INVALID_HANDLE_VALUE
-	raise SystemCallError, FFI.errno, "CreateFileW"
+        raise SystemCallError.new("CreateFileW", FFI.errno)
       end
 
       rdb = REPARSE_JDATA_BUFFER.new
@@ -346,24 +346,24 @@ class Dir
       bytes = FFI::MemoryPointer.new(:ulong)
 
       begin
-	bool = DeviceIoControl(
-                 handle,
-		 CTL_CODE(FILE_DEVICE_FILE_SYSTEM, 42, METHOD_BUFFERED, 0),
-		 nil,
-		 0,
-		 rdb,
-		 1024,
-		 bytes,
-		 nil
-	)
+        bool = DeviceIoControl(
+          handle,
+          CTL_CODE(FILE_DEVICE_FILE_SYSTEM, 42, METHOD_BUFFERED, 0),
+          nil,
+          0,
+          rdb,
+          1024,
+          bytes,
+          nil
+        )
 
-	error = FFI.errno
+        error = FFI.errno
 
-	unless bool
-	  raise SystemCallError, error, "DeviceIoControl"
-	end
+        unless bool
+          raise SystemCallError.new("DeviceIoControl", error)
+        end
       ensure
-	CloseHandle(handle)
+        CloseHandle(handle)
       end
     end
 
@@ -371,7 +371,7 @@ class Dir
     jname = (rdb[:PathBuffer].to_ptr + rdb[:SubstituteNameOffset]).read_string(rdb[:SubstituteNameLength])
     jname = jname.bytes.to_a.pack('C*')
     jname = jname.force_encoding("UTF-16LE")
-    raise(Exception, "Junction name came back as #{jname}") unless jname[0..3] == "\\??\\".encode("UTF-16LE")
+    raise "Junction name came back as #{jname}" unless jname[0..3] == "\\??\\".encode("UTF-16LE")
     return jname[4..-1].gsub("\\".encode("UTF-16LE"), "/".encode("UTF-16LE"))
   end
 
