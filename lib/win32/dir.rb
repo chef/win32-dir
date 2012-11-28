@@ -194,11 +194,8 @@ class Dir
   #    Dir.create_junction('C:/to', 'C:/from')
   #
   def self.create_junction(to, from)
-    to   = to.tr(File::SEPARATOR, File::ALT_SEPARATOR) + "\0"   # Normalize path
-    from = from.tr(File::SEPARATOR, File::ALT_SEPARATOR) + "\0" # Normalize path
-
-    to.encode!('UTF-16LE')
-    from.encode!('UTF-16LE')
+    to   = to.wincode
+    from = from.wincode
 
     from_path = 0.chr * 1024
     from_path.encode!('UTF-16LE')
@@ -212,7 +209,6 @@ class Dir
     end
 
     to_path = 0.chr * 1024
-    to.encode!('UTF-16LE')
     to_path.encode!('UTF-16LE')
 
     length = GetFullPathNameW(to, to_path.size, to_path, nil)
@@ -303,9 +299,9 @@ class Dir
   #
   def self.read_junction(junction)
     return false unless Dir.junction?(junction)
-    junction = junction.tr(File::SEPARATOR, File::ALT_SEPARATOR) + "\0"  # Normalize path
 
-    junction.encode!('UTF-16LE')
+    junction = junction.wincode
+
     junction_path = 0.chr * 1024
     junction_path.encode!('UTF-16LE')
 
@@ -379,19 +375,15 @@ class Dir
   # a directory, or contains any files other than '.' or '..'.
   #
   def self.empty?(path)
-    path = path + "\0"
-    path = path.encode('UTF-16LE')
-    PathIsDirectoryEmptyW(path)
+    PathIsDirectoryEmptyW(path.wincode)
   end
 
   # Returns whether or not +path+ is a junction.
   #
   def self.junction?(path)
     bool = true
-    path = path + "\0"
-    path.encode!('UTF-16LE')
 
-    attrib = GetFileAttributesW(path)
+    attrib = GetFileAttributesW(path.wincode)
 
     # Only directories with a reparse point attribute can be junctions
     if attrib == INVALID_FILE_ATTRIBUTES ||
