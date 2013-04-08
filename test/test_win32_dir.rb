@@ -25,7 +25,7 @@ class TC_Win32_Dir < Test::Unit::TestCase
   end
 
   test "version number is set to expected value" do
-    assert_equal('0.4.1', Dir::VERSION)
+    assert_equal('0.4.2', Dir::VERSION)
   end
 
   test 'glob handles backslashes' do

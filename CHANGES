@@ -1,3 +1,7 @@
+== 0.4.2 - 8-Apr-2013
+* Fixed the HANDLE function prototypes in the underlying FFI code and added
+  some custom typedefs for convenience. This affects 64 bit Ruby code.
+
 == 0.4.1 - 2-Oct-2012
 * Added the Dir.read_junction method. Thanks go to Gabriel Wilkins for the patch.
 

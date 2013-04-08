@@ -26,7 +26,7 @@ class Dir
   )
 
   # The version of the win32-dir library.
-  VERSION = '0.4.1'
+  VERSION = '0.4.2'
 
   # CSIDL constants
   csidl = Hash[
