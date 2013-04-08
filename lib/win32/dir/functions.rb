@@ -9,11 +9,16 @@ require 'ffi'
 module Dir::Functions
   extend FFI::Library
 
+  typedef :ulong, :dword
+  typedef :uintptr_t, :handle
+  typedef :uintptr_t, :hwnd
+  typedef :pointer, :ptr
+
   ffi_lib :shell32
 
-  attach_function :SHGetFolderPathW, [:ulong, :int, :ulong, :ulong, :buffer_out], :ulong
-  attach_function :SHGetFolderLocation, [:ulong, :int, :ulong, :ulong, :pointer], :ulong
-  attach_function :SHGetFileInfo, [:ulong, :ulong, :pointer, :uint, :uint], :ulong
+  attach_function :SHGetFolderPathW, [:hwnd, :int, :handle, :dword, :buffer_out], :dword
+  attach_function :SHGetFolderLocation, [:hwnd, :int, :handle, :dword, :ptr], :dword
+  attach_function :SHGetFileInfo, [:dword, :dword, :ptr, :uint, :uint], :dword
 
   ffi_lib :shlwapi
 
@@ -21,16 +26,16 @@ module Dir::Functions
 
   ffi_lib :kernel32
 
-  attach_function :CloseHandle, [:ulong], :bool
-  attach_function :CreateDirectoryW, [:buffer_in, :pointer], :bool
-  attach_function :CreateFileW, [:buffer_in, :ulong, :ulong, :pointer, :ulong, :ulong, :ulong], :ulong
-  attach_function :DeviceIoControl, [:ulong, :ulong, :pointer, :ulong, :pointer, :ulong, :pointer, :pointer], :bool
-  attach_function :GetCurrentDirectoryW, [:ulong, :buffer_out], :ulong
-  attach_function :GetFileAttributesW, [:buffer_in], :ulong
-  attach_function :GetLastError, [], :ulong
-  attach_function :GetShortPathNameW, [:buffer_in, :buffer_out, :ulong], :ulong
-  attach_function :GetLongPathNameW, [:buffer_in, :buffer_out, :ulong], :ulong
-  attach_function :GetFullPathNameW, [:buffer_in, :ulong, :buffer_out, :pointer], :ulong
+  attach_function :CloseHandle, [:handle], :bool
+  attach_function :CreateDirectoryW, [:buffer_in, :ptr], :bool
+  attach_function :CreateFileW, [:buffer_in, :dword, :dword, :ptr, :dword, :dword, :handle], :handle
+  attach_function :DeviceIoControl, [:handle, :dword, :ptr, :dword, :ptr, :dword, :ptr, :ptr], :bool
+  attach_function :GetCurrentDirectoryW, [:dword, :buffer_out], :dword
+  attach_function :GetFileAttributesW, [:buffer_in], :dword
+  attach_function :GetLastError, [], :dword
+  attach_function :GetShortPathNameW, [:buffer_in, :buffer_out, :dword], :dword
+  attach_function :GetLongPathNameW, [:buffer_in, :buffer_out, :dword], :dword
+  attach_function :GetFullPathNameW, [:buffer_in, :dword, :buffer_out, :ptr], :dword
   attach_function :RemoveDirectoryW, [:buffer_in], :bool
 end
 
