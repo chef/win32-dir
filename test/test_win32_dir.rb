@@ -380,6 +380,11 @@ class TC_Win32_Dir < Test::Unit::TestCase
     assert_kind_of(String, Dir::WINDOWS)
   end
 
+  test "constants are ascii_compatible?" do
+    assert_true(Dir::COMMON_APPDATA.encoding.ascii_compatible?)
+    assert_nothing_raised{ File.join(Dir::COMMON_APPDATA, 'foo') }
+  end
+
   test "ffi functions are private" do
     assert_not_respond_to(Dir, :SHGetFolderPathW)
   end
