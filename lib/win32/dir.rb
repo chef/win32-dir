@@ -110,7 +110,7 @@ class Dir
       end
     end
 
-    Dir.const_set(key, path) if path
+    Dir.const_set(key, path.encode(Encoding.default_external)) if path
   }
 
   # Set Dir::MYDOCUMENTS to the same as Dir::PERSONAL if undefined
