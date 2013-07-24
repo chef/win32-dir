@@ -7,6 +7,14 @@ end
 require 'ffi'
 
 module Dir::Functions
+  module FFI::Library
+    # Wrapper method for attach_function + private
+    def attach_pfunc(*args)
+      attach_function(*args)
+      private args[0]
+    end
+  end
+
   extend FFI::Library
 
   typedef :ulong, :dword
@@ -16,27 +24,27 @@ module Dir::Functions
 
   ffi_lib :shell32
 
-  attach_function :SHGetFolderPathW, [:hwnd, :int, :handle, :dword, :buffer_out], :dword
-  attach_function :SHGetFolderLocation, [:hwnd, :int, :handle, :dword, :ptr], :dword
-  attach_function :SHGetFileInfo, [:dword, :dword, :ptr, :uint, :uint], :dword
+  attach_pfunc :SHGetFolderPathW, [:hwnd, :int, :handle, :dword, :buffer_out], :dword
+  attach_pfunc :SHGetFolderLocation, [:hwnd, :int, :handle, :dword, :ptr], :dword
+  attach_pfunc :SHGetFileInfo, [:dword, :dword, :ptr, :uint, :uint], :dword
 
   ffi_lib :shlwapi
 
-  attach_function :PathIsDirectoryEmptyW, [:buffer_in], :bool
+  attach_pfunc :PathIsDirectoryEmptyW, [:buffer_in], :bool
 
   ffi_lib :kernel32
 
-  attach_function :CloseHandle, [:handle], :bool
-  attach_function :CreateDirectoryW, [:buffer_in, :ptr], :bool
-  attach_function :CreateFileW, [:buffer_in, :dword, :dword, :ptr, :dword, :dword, :handle], :handle
-  attach_function :DeviceIoControl, [:handle, :dword, :ptr, :dword, :ptr, :dword, :ptr, :ptr], :bool
-  attach_function :GetCurrentDirectoryW, [:dword, :buffer_out], :dword
-  attach_function :GetFileAttributesW, [:buffer_in], :dword
-  attach_function :GetLastError, [], :dword
-  attach_function :GetShortPathNameW, [:buffer_in, :buffer_out, :dword], :dword
-  attach_function :GetLongPathNameW, [:buffer_in, :buffer_out, :dword], :dword
-  attach_function :GetFullPathNameW, [:buffer_in, :dword, :buffer_out, :ptr], :dword
-  attach_function :RemoveDirectoryW, [:buffer_in], :bool
+  attach_pfunc :CloseHandle, [:handle], :bool
+  attach_pfunc :CreateDirectoryW, [:buffer_in, :ptr], :bool
+  attach_pfunc :CreateFileW, [:buffer_in, :dword, :dword, :ptr, :dword, :dword, :handle], :handle
+  attach_pfunc :DeviceIoControl, [:handle, :dword, :ptr, :dword, :ptr, :dword, :ptr, :ptr], :bool
+  attach_pfunc :GetCurrentDirectoryW, [:dword, :buffer_out], :dword
+  attach_pfunc :GetFileAttributesW, [:buffer_in], :dword
+  attach_pfunc :GetLastError, [], :dword
+  attach_pfunc :GetShortPathNameW, [:buffer_in, :buffer_out, :dword], :dword
+  attach_pfunc :GetLongPathNameW, [:buffer_in, :buffer_out, :dword], :dword
+  attach_pfunc :GetFullPathNameW, [:buffer_in, :dword, :buffer_out, :ptr], :dword
+  attach_pfunc :RemoveDirectoryW, [:buffer_in], :bool
 end
 
 class String

@@ -7,26 +7,8 @@ class Dir
   include Dir::Constants
   extend Dir::Functions
 
-  private_class_method(
-    :SHGetFolderPathW,
-    :SHGetFolderLocation,
-    :SHGetFileInfo,
-    :PathIsDirectoryEmptyW,
-    :CloseHandle,
-    :CreateDirectoryW,
-    :CreateFileW,
-    :DeviceIoControl,
-    :GetCurrentDirectoryW,
-    :GetFileAttributesW,
-    :GetLastError,
-    :GetShortPathNameW,
-    :GetLongPathNameW,
-    :GetFullPathNameW,
-    :RemoveDirectoryW
-  )
-
   # The version of the win32-dir library.
-  VERSION = '0.4.2'
+  VERSION = '0.4.3'
 
   # CSIDL constants
   csidl = Hash[
