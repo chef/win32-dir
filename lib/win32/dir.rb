@@ -287,10 +287,6 @@ class Dir
   # Raises +ENOENT+ if given path does not exist, returns +false+
   # if it is not a junction.
   #
-  # Note that regardless of the encoding of the string passed in,
-  # +read_junction()+ will always return a result as UTF-16LE, as it's
-  # actually written in the reparse point.
-  #
   # Example:
   #
   #    Dir.mkdir('C:/from')
@@ -368,7 +364,7 @@ class Dir
     jname = jname.bytes.to_a.pack('C*')
     jname = jname.force_encoding("UTF-16LE")
     raise "Junction name came back as #{jname}" unless jname[0..3] == "\\??\\".encode("UTF-16LE")
-    return jname[4..-1].gsub("\\".encode("UTF-16LE"), "/".encode("UTF-16LE"))
+    File.expand_path(jname[4..-1].encode(Encoding.default_external))
   end
 
   # Returns whether or not +path+ is empty.  Returns false if +path+ is not
