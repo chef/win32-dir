@@ -6,10 +6,16 @@ CLEAN.include('**/*.gem', '**/*.log')
 
 namespace 'gem' do
   desc "Create the win32-dir gem"
-  task :build => [:clean] do
+  task :create => [:clean] do
     Dir["*.gem"].each{ |f| File.delete(f) }
     spec = eval(IO.read('win32-dir.gemspec'))
-    Gem::Builder.new(spec).build
+
+    if Gem::VERSION.to_f < 2.0
+      Gem::Builder.new(spec).build
+    else
+      require 'rubygems/package'
+      Gem::Package.build(spec)
+    end
   end
   
   desc "Install the win32-dir gem"
