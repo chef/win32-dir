@@ -4,6 +4,7 @@
   they will now work with methods like File.join. Thanks go to Josh Cooper
   for the patches.
 * Some changes for internal handling of making FFI functions private.
+* Updated gem:create task for rubygems 2.
 
 == 0.4.2 - 8-Apr-2013
 * Fixed the HANDLE function prototypes in the underlying FFI code and added
