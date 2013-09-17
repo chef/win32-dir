@@ -88,6 +88,7 @@ class Dir
       if SHGetFolderLocation(0, value, 0, 0, ptr) == 0
         if SHGetFileInfo(ptr.read_long, 0, info, info.size, flags) != 0
           path = info[:szDisplayName].to_s
+          path.force_encoding(Encoding.default_external)
         end
       end
     end
