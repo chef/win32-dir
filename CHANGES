@@ -1,3 +1,6 @@
+== 0.4.4 - 22-Sep-2013
+* Yet another encoding fix. Thanks go to Rob Reynolds for the patch.
+
 == 0.4.3 - 24-Jul-2013
 * Changed the Dir.read_junction and CSIDL constant strings so that they
   use the default external encoding instead of UTF-16LE. This means that
