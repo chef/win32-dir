@@ -1,3 +1,8 @@
+== 0.4.5 - 23-Sep-2013
+* Yet another encoding fix, this time one that affected JRuby.
+* Fixed the Dir[] and Dir.glob methods so they match the spec. Thanks go
+  to Chris Westbrook for the spot.
+
 == 0.4.4 - 22-Sep-2013
 * Yet another encoding fix. Thanks go to Rob Reynolds for the patch.
 
