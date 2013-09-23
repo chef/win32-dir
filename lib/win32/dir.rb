@@ -93,7 +93,11 @@ class Dir
       end
     end
 
-    Dir.const_set(key, path.encode(Encoding.default_external)) if path
+    begin
+      Dir.const_set(key, path.encode(Encoding.default_external)) if path
+    rescue Encoding::UndefinedConversionError
+      Dir.const_set(key, path.encode('UTF-8')) if path
+    end
   }
 
   # Set Dir::MYDOCUMENTS to the same as Dir::PERSONAL if undefined
@@ -160,8 +164,11 @@ class Dir
         if GetLongPathNameW(path2, path3, path3.size) == 0
           raise SystemCallError.new("GetLongPathNameW", FFI.errno)
         end
-
-        path3.strip.encode(Encoding.default_external)
+        begin
+          path3.strip.encode(Encoding.default_external)
+        rescue Encoding::UndefinedConversionError
+          path3.strip.encode('UTF-8')
+        end
       end
 
       alias :pwd :getwd
@@ -347,7 +354,11 @@ class Dir
     jname = jname.bytes.to_a.pack('C*')
     jname = jname.force_encoding("UTF-16LE")
     raise "Junction name came back as #{jname}" unless jname[0..3] == "\\??\\".encode("UTF-16LE")
-    File.expand_path(jname[4..-1].encode(Encoding.default_external))
+    begin
+      File.expand_path(jname[4..-1].encode(Encoding.default_external))
+    rescue Encoding::UndefinedConversionError
+      File.expand_path(jname[4..-1].encode('UTF-8'))
+    end
   end
 
   # Returns whether or not +path+ is empty.  Returns false if +path+ is not
