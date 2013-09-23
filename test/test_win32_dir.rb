@@ -25,13 +25,20 @@ class TC_Win32_Dir < Test::Unit::TestCase
   end
 
   test "version number is set to expected value" do
-    assert_equal('0.4.4', Dir::VERSION)
+    assert_equal('0.4.5', Dir::VERSION)
   end
 
   test 'glob handles backslashes' do
     pattern = "C:\\Program Files\\Common Files\\System\\*.dll"
     assert_nothing_raised{ Dir.glob(pattern) }
     assert_true(Dir.glob(pattern).size > 0)
+  end
+
+  test 'glob handles multiple strings' do
+    pattern1 = "C:\\Program Files\\Common Files\\System\\*.dll"
+    pattern2 = "C:\\Windows\\*.exe"
+    assert_nothing_raised{ Dir.glob([pattern1, pattern2]) }
+    assert_true(Dir.glob([pattern1, pattern2]).size > 0)
   end
 
   test 'glob still observes flags' do
@@ -49,6 +56,13 @@ class TC_Win32_Dir < Test::Unit::TestCase
     pattern = "C:\\Program Files\\Common Files\\System\\*.dll"
     assert_nothing_raised{ Dir[pattern] }
     assert_true(Dir[pattern].size > 0)
+  end
+
+  test 'ref handles multiple arguments' do
+    pattern1 = "C:\\Program Files\\Common Files\\System\\*.dll"
+    pattern2 = "C:\\Windows\\*.exe"
+    assert_nothing_raised{ Dir[pattern1, pattern2] }
+    assert_true(Dir[pattern1, pattern2].size > 0)
   end
 
   test "create_junction basic functionality" do

@@ -8,7 +8,7 @@ class Dir
   extend Dir::Functions
 
   # The version of the win32-dir library.
-  VERSION = '0.4.4'
+  VERSION = '0.4.5'
 
   # CSIDL constants
   csidl = Hash[
@@ -112,8 +112,13 @@ class Dir
     # backslashes in path names.
     #
     def glob(glob_pattern, flags = 0, &block)
-      glob_pattern = glob_pattern.tr("\\", "/")
-      old_glob(glob_pattern, flags, &block)
+      if glob_pattern.is_a?(Array)
+        temp = glob_pattern.map!{ |pattern| pattern.tr("\\", "/") }
+      else
+        temp = glob_pattern.tr("\\", "/")
+      end
+
+      old_glob(temp, flags, &block)
     end
 
     alias old_ref []
@@ -121,9 +126,9 @@ class Dir
     # Same as the standard MRI Dir[] method except that it handles
     # backslashes in path names.
     #
-    def [](glob_pattern)
-      glob_pattern = glob_pattern.tr("\\", "/")
-      old_ref(glob_pattern)
+    def [](*glob_patterns)
+      temp = glob_patterns.map!{ |pattern| pattern.tr("\\", "/") }
+      old_ref(*temp)
     end
 
     # JRuby normalizes the path by default.
