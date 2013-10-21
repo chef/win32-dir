@@ -1,6 +1,7 @@
 == 0.4.6 - 21-Oct-2013
 * Fixed the INVALID_HANDLE_VALUE and INVALID_FILE_ATTRIBUTES constants for
   64-bit versions of Ruby.
+* Added Rake as a development dependency.
 
 == 0.4.5 - 23-Sep-2013
 * Yet another encoding fix, this time one that affected JRuby.
