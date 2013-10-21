@@ -1,9 +1,11 @@
+require 'ffi'
+
 module Dir::Constants
+  include FFI::Library
+
   private
 
   FILE_DEVICE_FILE_SYSTEM      = 0x00000009
-  INVALID_HANDLE_VALUE         = 0xFFFFFFFF
-  INVALID_FILE_ATTRIBUTES      = 0xFFFFFFFF
   FILE_FLAG_OPEN_REPARSE_POINT = 0x00200000
   FILE_FLAG_BACKUP_SEMANTICS   = 0x02000000
   FILE_ATTRIBUTE_DIRECTORY     = 0x00000010
@@ -15,4 +17,7 @@ module Dir::Constants
   GENERIC_WRITE                = 0x40000000
   SHGFI_DISPLAYNAME            = 0x000000200
   SHGFI_PIDL                   = 0x000000008
+
+  INVALID_HANDLE_VALUE    = FFI::Pointer.new(-1).address
+  INVALID_FILE_ATTRIBUTES = FFI::Pointer.new(-1).address
 end
