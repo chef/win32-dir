@@ -8,7 +8,7 @@ class Dir
   extend Dir::Functions
 
   # The version of the win32-dir library.
-  VERSION = '0.4.6'
+  VERSION = '0.4.7'
 
   # CSIDL constants
   csidl = Hash[
@@ -113,9 +113,9 @@ class Dir
     #
     def glob(glob_pattern, flags = 0, &block)
       if glob_pattern.is_a?(Array)
-        temp = glob_pattern.map!{ |pattern| pattern.tr("\\", "/") }
+        temp = glob_pattern.map!{ |pattern| "#{pattern}".tr("\\", "/") }
       else
-        temp = glob_pattern.tr("\\", "/")
+        temp = "#{glob_pattern}".tr("\\", "/")
       end
 
       old_glob(temp, flags, &block)
@@ -127,7 +127,7 @@ class Dir
     # backslashes in path names.
     #
     def [](*glob_patterns)
-      temp = glob_patterns.map!{ |pattern| pattern.tr("\\", "/") }
+      temp = glob_patterns.map!{ |pattern| "#{pattern}".tr("\\", "/") }
       old_ref(*temp)
     end
 
@@ -189,8 +189,8 @@ class Dir
   #    Dir.create_junction('C:/to', 'C:/from')
   #
   def self.create_junction(to, from)
-    to   = to.wincode
-    from = from.wincode
+    to   = "#{to}".wincode
+    from = "#{from}".wincode
 
     from_path = 0.chr * 1024
     from_path.encode!('UTF-16LE')
@@ -278,20 +278,20 @@ class Dir
     self
   end
 
-  # Returns the+ +path+ that a given +symlink+ points to.
-  # Raises +ENOENT+ if given path does not exist, returns +false+
+  # Returns the path that a given junction points to. Raises an
+  # Errno::ENOENT error if the given path does not exist. Returns false
   # if it is not a junction.
   #
   # Example:
   #
   #    Dir.mkdir('C:/from')
   #    Dir.create_junction('C:/to', 'C:/from')
-  #    Dir.read_junction("c:/to")          => "c:/from"
+  #    Dir.read_junction("c:/to") # => "c:/from"
   #
   def self.read_junction(junction)
-    return false unless Dir.junction?(junction)
+    return false unless Dir.junction?("#{junction}")
 
-    junction = junction.wincode
+    junction = "#{junction}".wincode
 
     junction_path = 0.chr * 1024
     junction_path.encode!('UTF-16LE')
@@ -370,7 +370,7 @@ class Dir
   # a directory, or contains any files other than '.' or '..'.
   #
   def self.empty?(path)
-    PathIsDirectoryEmptyW(path.wincode)
+    PathIsDirectoryEmptyW("#{path}".wincode)
   end
 
   # Returns whether or not +path+ is a junction.
@@ -378,7 +378,7 @@ class Dir
   def self.junction?(path)
     bool = true
 
-    attrib = GetFileAttributesW(path.wincode)
+    attrib = GetFileAttributesW("#{path}".wincode)
 
     # Only directories with a reparse point attribute can be junctions
     if attrib == INVALID_FILE_ATTRIBUTES ||
