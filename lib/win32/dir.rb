@@ -148,31 +148,30 @@ class Dir
       #    Dir.getwd # => C:\Program Files
       #
       def getwd
-        path1 = 0.chr * 1024
-        path2 = 0.chr * 1024
-        path3 = 0.chr * 1024
-
-        path1.encode!('UTF-16LE')
+        path1 = FFI::Buffer.new(1024)
+        path2 = FFI::Buffer.new(1024)
+        path3 = FFI::Buffer.new(1024)
 
         if GetCurrentDirectoryW(path1.size, path1) == 0
           raise SystemCallError.new("GetCurrentDirectoryW", FFI.errno)
         end
 
-        path2.encode!('UTF-16LE')
-
         if GetShortPathNameW(path1, path2, path2.size) == 0
           raise SystemCallError.new("GetShortPathNameW", FFI.errno)
         end
 
-        path3.encode!('UTF-16LE')
+        length = GetLongPathNameW(path2, path3, path3.size)
 
-        if GetLongPathNameW(path2, path3, path3.size) == 0
+        if length == 0
           raise SystemCallError.new("GetLongPathNameW", FFI.errno)
         end
+
+        path = path3.read_bytes(length * 2).delete(0.chr)
+
         begin
-          path3.strip.encode(Encoding.default_external)
+          path.encode(Encoding.default_external)
         rescue Encoding::UndefinedConversionError
-          path3.strip.encode('UTF-8')
+          path.encode('UTF-8')
         end
       end
 
