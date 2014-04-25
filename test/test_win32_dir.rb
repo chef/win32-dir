@@ -9,6 +9,7 @@ require 'test-unit'
 require 'win32/dir'
 require 'tmpdir'
 require 'fileutils'
+require 'pathname'
 
 class TC_Win32_Dir < Test::Unit::TestCase
   def self.startup
@@ -25,7 +26,7 @@ class TC_Win32_Dir < Test::Unit::TestCase
   end
 
   test "version number is set to expected value" do
-    assert_equal('0.4.6', Dir::VERSION)
+    assert_equal('0.4.7', Dir::VERSION)
   end
 
   test 'glob handles backslashes' do
@@ -52,6 +53,13 @@ class TC_Win32_Dir < Test::Unit::TestCase
     assert_true(array.include?('.'))
   end
 
+  test 'glob handles Pathname objects' do
+    pattern1 = Pathname.new("C:\\Program Files\\Common Files\\System\\*.dll")
+    pattern2 = Pathname.new("C:\\Windows\\*.exe")
+    assert_nothing_raised{ Dir.glob([pattern1, pattern2]) }
+    assert_true(Dir.glob([pattern1, pattern2]).size > 0)
+  end
+
   test 'ref handles backslashes' do
     pattern = "C:\\Program Files\\Common Files\\System\\*.dll"
     assert_nothing_raised{ Dir[pattern] }
@@ -61,6 +69,13 @@ class TC_Win32_Dir < Test::Unit::TestCase
   test 'ref handles multiple arguments' do
     pattern1 = "C:\\Program Files\\Common Files\\System\\*.dll"
     pattern2 = "C:\\Windows\\*.exe"
+    assert_nothing_raised{ Dir[pattern1, pattern2] }
+    assert_true(Dir[pattern1, pattern2].size > 0)
+  end
+
+  test 'ref handles pathname arguments' do
+    pattern1 = Pathname.new("C:\\Program Files\\Common Files\\System\\*.dll")
+    pattern2 = Pathname.new("C:\\Windows\\*.exe")
     assert_nothing_raised{ Dir[pattern1, pattern2] }
     assert_true(Dir[pattern1, pattern2].size > 0)
   end
@@ -83,6 +98,13 @@ class TC_Win32_Dir < Test::Unit::TestCase
     assert_equal(Dir.entries(@@from), Dir.entries(@unicode_to))
   end
 
+  test "create_junction works as expected with pathname objects" do
+    assert_nothing_raised{ Dir.create_junction(Pathname.new(@ascii_to), Pathname.new(@@from)) }
+    assert_true(File.exists?(@ascii_to))
+    File.open(@test_file, 'w'){ |fh| fh.puts "Hello World" }
+    assert_equal(Dir.entries(@@from), Dir.entries(@ascii_to))
+  end
+
   test "read_junction works as expected with ascii characters" do
     assert_nothing_raised{ Dir.create_junction(@ascii_to, @@from) }
     assert_true(File.exists?(@ascii_to))
@@ -101,11 +123,18 @@ class TC_Win32_Dir < Test::Unit::TestCase
     assert_nothing_raised{ File.join(Dir.read_junction(@unicode_to), 'foo') }
   end
 
+  test "read_junction works as expected with pathname objects" do
+    assert_nothing_raised{ Dir.create_junction(Pathname.new(@ascii_to), Pathname.new(@@from)) }
+    assert_true(File.exists?(@ascii_to))
+    assert_equal(Dir.read_junction(@ascii_to), @@from)
+  end
+
   test "junction? method returns boolean value" do
     assert_respond_to(Dir, :junction?)
     assert_nothing_raised{ Dir.create_junction(@ascii_to, @@from) }
     assert_false(Dir.junction?(@@from))
     assert_true(Dir.junction?(@ascii_to))
+    assert_true(Dir.junction?(Pathname.new(@ascii_to)))
   end
 
   test "reparse_dir? is an aliase for junction?" do
@@ -117,6 +146,7 @@ class TC_Win32_Dir < Test::Unit::TestCase
     assert_respond_to(Dir, :empty?)
     assert_false(Dir.empty?("C:\\")) # One would think
     assert_true(Dir.empty?(@@from))
+    assert_true(Dir.empty?(Pathname.new(@@from)))
   end
 
   test "pwd basic functionality" do
