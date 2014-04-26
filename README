@@ -233,6 +233,8 @@ Dir::TEMPLATES
   only instead of an actual path.
 	
 == Known Bugs
+  The Dir.create_junction and Dir.read_junction methods do not work with JRuby.
+
   Please log any bug reports on the project page at
   http://www.github.com/djberg96/win32-dir
 
