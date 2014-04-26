@@ -166,7 +166,7 @@ class Dir
           raise SystemCallError.new("GetLongPathNameW", FFI.errno)
         end
 
-        path = path3.read_bytes(length * 2).delete(0.chr)
+        path = path3.read_bytes(length * 2).wstrip
 
         begin
           path.encode(Encoding.default_external)
