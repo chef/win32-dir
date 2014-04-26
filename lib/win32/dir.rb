@@ -256,7 +256,7 @@ class Dir
           handle,
           CTL_CODE(FILE_DEVICE_FILE_SYSTEM, 41, METHOD_BUFFERED, 0),
           rdb,
-          rdb[:ReparseDataLength] + 8,
+          rdb[:ReparseDataLength] + rdb.header_size,
           nil,
           0,
           bytes,
