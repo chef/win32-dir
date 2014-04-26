@@ -148,21 +148,25 @@ class Dir
       #    Dir.getwd # => C:\Program Files
       #
       def getwd
-        path1 = FFI::Buffer.new(1024)
-        path2 = FFI::Buffer.new(1024)
-        path3 = FFI::Buffer.new(1024)
+        path1 = FFI::Buffer.new(:wint_t, 1024, true)
+        path2 = FFI::Buffer.new(:wint_t, 1024, true)
+        path3 = FFI::Buffer.new(:wint_t, 1024, true)
 
-        if GetCurrentDirectoryW(path1.size, path1) == 0
+        length = GetCurrentDirectoryW(path1.size, path1)
+
+        if length == 0 || length > path1.size
           raise SystemCallError.new("GetCurrentDirectoryW", FFI.errno)
         end
 
-        if GetShortPathNameW(path1, path2, path2.size) == 0
+        length = GetShortPathNameW(path1, path2, path2.size)
+
+        if length == 0 || length > path2.size
           raise SystemCallError.new("GetShortPathNameW", FFI.errno)
         end
 
         length = GetLongPathNameW(path2, path3, path3.size)
 
-        if length == 0
+        if length == 0 || length > path3.size
           raise SystemCallError.new("GetLongPathNameW", FFI.errno)
         end
 
@@ -191,23 +195,19 @@ class Dir
     to   = "#{to}".wincode
     from = "#{from}".wincode
 
-    from_path = 0.chr * 1024
-    from_path.encode!('UTF-16LE')
-
+    from_path = (0.chr * 1024).encode('UTF-16LE')
     length = GetFullPathNameW(from, from_path.size, from_path, nil)
 
-    if length == 0
+    if length == 0 || length > from_path.size
       raise SystemCallError.new("GetFullPathNameW", FFI.errno)
     else
       from_path.strip!
     end
 
-    to_path = 0.chr * 1024
-    to_path.encode!('UTF-16LE')
-
+    to_path = (0.chr * 1024).encode('UTF-16LE')
     length = GetFullPathNameW(to, to_path.size, to_path, nil)
 
-    if length == 0
+    if length == 0 || length > to_path.size
       raise SystemCallError.new("GetFullPathNameW", FFI.errno)
     else
       to_path.strip!
