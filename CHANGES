@@ -1,3 +1,12 @@
+== 0.4.7 - 26-Apr-2014
+* All arguments to methods are now interpolated so that they'll use whatever 
+  to_str implemenation the argument provides instead of assuming String
+  arguments. This change was made because it turns out that at least some
+  of the overridden methods in MRI accept Pathname objects. Thanks go to
+  Josh Cooper/Puppet Labs for the spot.
+* Refactored the Dir.getwd method to use bonafide FFI buffers instead of
+  naked Ruby char buffers.
+
 == 0.4.6 - 21-Oct-2013
 * Fixed the INVALID_HANDLE_VALUE and INVALID_FILE_ATTRIBUTES constants for
   64-bit versions of Ruby.
