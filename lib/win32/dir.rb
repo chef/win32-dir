@@ -196,6 +196,7 @@ class Dir
     from = "#{from}".wincode
 
     from_path = (0.chr * 1024).encode('UTF-16LE')
+
     length = GetFullPathNameW(from, from_path.size, from_path, nil)
 
     if length == 0 || length > from_path.size
@@ -205,6 +206,7 @@ class Dir
     end
 
     to_path = (0.chr * 1024).encode('UTF-16LE')
+
     length = GetFullPathNameW(to, to_path.size, to_path, nil)
 
     if length == 0 || length > to_path.size
@@ -292,12 +294,11 @@ class Dir
 
     junction = "#{junction}".wincode
 
-    junction_path = 0.chr * 1024
-    junction_path.encode!('UTF-16LE')
+    junction_path = (0.chr * 1024).encode('UTF-16LE')
 
     length = GetFullPathNameW(junction, junction_path.size, junction_path, nil)
 
-    if length == 0
+    if length == 0 || length > junction_path.size
       raise SystemCallError.new("GetFullPathNameW", FFI.errno)
     else
       junction_path.strip!
