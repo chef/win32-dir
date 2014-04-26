@@ -6,6 +6,8 @@
   Josh Cooper/Puppet Labs for the spot.
 * Refactored the Dir.getwd method to use bonafide FFI buffers instead of
   naked Ruby char buffers.
+* Internally various functions now fail in the event that the resulting
+  paths would exceed their buffers.
 
 == 0.4.6 - 21-Oct-2013
 * Fixed the INVALID_HANDLE_VALUE and INVALID_FILE_ATTRIBUTES constants for
