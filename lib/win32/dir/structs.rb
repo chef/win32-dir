@@ -25,5 +25,13 @@ module Dir::Structs
       :PrintNameLength, :ushort,
       :PathBuffer, [:char, 1024]
     )
+
+    # The REPARSE_DATA_BUFFER_HEADER_SIZE which is calculated as:
+    #
+    # sizeof(ReparseTag) + sizeof(ReparseDataLength) + sizeof(Reserved)
+    #
+    def header_size
+      FFI::Type::ULONG.size + FFI::Type::USHORT.size + FFI::Type::USHORT.size
+    end
   end
 end
