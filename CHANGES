@@ -1,3 +1,6 @@
+== 0.4.8 - 27-Apr-2014
+* More closely mimic Ruby's stringiness checks for overrided methods.
+
 == 0.4.7 - 26-Apr-2014
 * All arguments to methods are now interpolated so that they'll use whatever 
   to_str implemenation the argument provides instead of assuming String
