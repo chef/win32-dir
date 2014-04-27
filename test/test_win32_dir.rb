@@ -60,6 +60,10 @@ class TC_Win32_Dir < Test::Unit::TestCase
     assert_true(Dir.glob([pattern1, pattern2]).size > 0)
   end
 
+  test "glob requires a stringy argument" do
+    assert_raise(TypeError){ Dir.glob(nil) }
+  end
+
   test 'ref handles backslashes' do
     pattern = "C:\\Program Files\\Common Files\\System\\*.dll"
     assert_nothing_raised{ Dir[pattern] }
@@ -105,6 +109,11 @@ class TC_Win32_Dir < Test::Unit::TestCase
     assert_equal(Dir.entries(@@from), Dir.entries(@ascii_to))
   end
 
+  test "create_junction requires stringy arguments" do
+    assert_raise(TypeError){ Dir.create_junction(nil, @@from) }
+    assert_raise(TypeError){ Dir.create_junction(@ascii_to, nil) }
+  end
+
   test "read_junction works as expected with ascii characters" do
     assert_nothing_raised{ Dir.create_junction(@ascii_to, @@from) }
     assert_true(File.exists?(@ascii_to))
@@ -127,6 +136,11 @@ class TC_Win32_Dir < Test::Unit::TestCase
     assert_nothing_raised{ Dir.create_junction(Pathname.new(@ascii_to), Pathname.new(@@from)) }
     assert_true(File.exists?(@ascii_to))
     assert_equal(Dir.read_junction(@ascii_to), @@from)
+  end
+
+  test "read_junction requires a stringy argument" do
+    assert_raise(TypeError){ Dir.read_junction(nil) }
+    assert_raise(TypeError){ Dir.read_junction([]) }
   end
 
   test "junction? method returns boolean value" do
