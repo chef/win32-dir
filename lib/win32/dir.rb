@@ -113,9 +113,9 @@ class Dir
     #
     def glob(glob_pattern, flags = 0, &block)
       if glob_pattern.is_a?(Array)
-        temp = glob_pattern.map!{ |pattern| "#{pattern}".tr("\\", "/") }
+        temp = glob_pattern.map!{ |pattern| string_check(pattern).tr("\\", "/") }
       else
-        temp = "#{glob_pattern}".tr("\\", "/")
+        temp = string_check(glob_pattern).tr("\\", "/")
       end
 
       old_glob(temp, flags, &block)
@@ -192,8 +192,8 @@ class Dir
   #    Dir.create_junction('C:/to', 'C:/from')
   #
   def self.create_junction(to, from)
-    to   = "#{to}".wincode
-    from = "#{from}".wincode
+    to   = string_check(to).wincode
+    from = string_check(from).wincode
 
     from_path = (0.chr * 1024).encode('UTF-16LE')
 
@@ -292,7 +292,7 @@ class Dir
   def self.read_junction(junction)
     return false unless Dir.junction?("#{junction}")
 
-    junction = "#{junction}".wincode
+    junction = string_check(junction).wincode
 
     junction_path = (0.chr * 1024).encode('UTF-16LE')
 
@@ -398,6 +398,16 @@ class Dir
   end
 
   private
+
+  class << self
+    # Simulate MRI's contortions for a stringiness check.
+    def string_check(arg)
+      return arg if arg.is_a?(String)
+      return arg.send(:to_str) if arg.respond_to?(:to_str, true) # MRI honors it, even if private
+      return arg.to_path if arg.respond_to?(:to_path)
+      raise TypeError
+    end
+  end
 
   # Macro from Windows header file, used by the create_junction method.
   def self.CTL_CODE(device, function, method, access)
