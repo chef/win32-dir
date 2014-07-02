@@ -290,7 +290,7 @@ class Dir
   #    Dir.read_junction("c:/to") # => "c:/from"
   #
   def self.read_junction(junction)
-    return false unless Dir.junction?("#{junction}")
+    return false unless Dir.junction?(junction)
 
     junction = string_check(junction).wincode
 
@@ -376,6 +376,7 @@ class Dir
   # Returns whether or not +path+ is a junction.
   #
   def self.junction?(path)
+    string_check(path)
     bool = true
 
     attrib = GetFileAttributesW("#{path}".wincode)
