@@ -19,5 +19,5 @@ module Dir::Constants
   SHGFI_PIDL                   = 0x000000008
 
   INVALID_HANDLE_VALUE    = FFI::Pointer.new(-1).address
-  INVALID_FILE_ATTRIBUTES = FFI::Pointer.new(-1).address
+  INVALID_FILE_ATTRIBUTES = 0xFFFFFFFF
 end
