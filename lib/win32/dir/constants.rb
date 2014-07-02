@@ -18,6 +18,9 @@ module Dir::Constants
   SHGFI_DISPLAYNAME            = 0x000000200
   SHGFI_PIDL                   = 0x000000008
 
-  INVALID_HANDLE_VALUE    = FFI::Pointer.new(-1).address
+  # ((DWORD)-1)
   INVALID_FILE_ATTRIBUTES = 0xFFFFFFFF
+
+  # ((HANDLE)-1)
+  INVALID_HANDLE_VALUE = FFI::Pointer.new(-1).address
 end
