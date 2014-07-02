@@ -2,7 +2,7 @@ require 'rubygems'
 
 Gem::Specification.new do |spec|
   spec.name      = 'win32-dir'
-  spec.version   = '0.4.8'
+  spec.version   = '0.4.9'
   spec.authors   = ['Daniel J. Berger', 'Park Heesob']
   spec.license   = 'Artistic 2.0'
   spec.email     = 'djberg96@gmail.com'
@@ -11,7 +11,6 @@ Gem::Specification.new do |spec|
   spec.test_file = 'test/test_win32_dir.rb'
   spec.files     = Dir['**/*'].reject{ |f| f.include?('git') }
 
-  spec.rubyforge_project = 'win32utils'
   spec.extra_rdoc_files  = ['README', 'CHANGES', 'MANIFEST']
   spec.required_ruby_version = '>= 1.9.2'
 
