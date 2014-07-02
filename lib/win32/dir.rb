@@ -1,6 +1,6 @@
-require File.join(File.dirname(File.expand_path(__FILE__)), 'dir', 'constants')
-require File.join(File.dirname(File.expand_path(__FILE__)), 'dir', 'functions')
-require File.join(File.dirname(File.expand_path(__FILE__)), 'dir', 'structs')
+require_relative 'dir/constants'
+require_relative 'dir/functions'
+require_relative 'dir/structs'
 
 class Dir
   include Dir::Structs
@@ -8,7 +8,7 @@ class Dir
   extend Dir::Functions
 
   # The version of the win32-dir library.
-  VERSION = '0.4.8'
+  VERSION = '0.4.9'
 
   # CSIDL constants
   csidl = Hash[
