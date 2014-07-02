@@ -2,6 +2,7 @@
 * Fixed the INVALID_FILE_ATTRIBUTES constant. It's only a 32-bit value.
   Thanks go to Ethan Brown for the patch.
 * Use relative_require instead of manually doing things.
+* Removed rubyforge_project from gemspec.
 
 == 0.4.8 - 27-Apr-2014
 * More closely mimic Ruby's stringiness checks for overrided methods.
