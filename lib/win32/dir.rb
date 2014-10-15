@@ -8,7 +8,7 @@ class Dir
   extend Dir::Functions
 
   # The version of the win32-dir library.
-  VERSION = '0.4.9'
+  VERSION = '0.5.0'
 
   # CSIDL constants
   csidl = Hash[
@@ -358,7 +358,7 @@ class Dir
     jname = (rdb[:PathBuffer].to_ptr + rdb[:SubstituteNameOffset]).read_string(rdb[:SubstituteNameLength])
     jname = jname.bytes.to_a.pack('C*')
     jname = jname.force_encoding("UTF-16LE")
-    raise "Junction name came back as #{jname}" unless jname[0..3] == "\\??\\".encode("UTF-16LE")
+    raise "Invalid junction name: #{jname.encode('UTF-8')}" unless jname[0..3] == "\\??\\".encode("UTF-16LE")
     begin
       File.expand_path(jname[4..-1].encode(Encoding.default_external))
     rescue Encoding::UndefinedConversionError
