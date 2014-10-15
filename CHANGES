@@ -1,3 +1,11 @@
+== 0.5.0 - 15-Oct-2014
+* Fixed an encoding error in an error message in the Dir.read_junction method.
+  Thanks go to topac for the spot and patch.
+* Replaced File.exists? with File.exist? in the test suite to avoid warnings
+  in Ruby 2.1 and later.
+* Do not let the version number fool you, this is not a major release. I
+  simply ran out of version numbers.
+
 == 0.4.9 - 2-Jul-2014
 * Fixed the INVALID_FILE_ATTRIBUTES constant. It's only a 32-bit value.
   Thanks go to Ethan Brown for the patch.
