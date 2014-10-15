@@ -2,7 +2,7 @@ require 'rubygems'
 
 Gem::Specification.new do |spec|
   spec.name      = 'win32-dir'
-  spec.version   = '0.4.9'
+  spec.version   = '0.5.0'
   spec.authors   = ['Daniel J. Berger', 'Park Heesob']
   spec.license   = 'Artistic 2.0'
   spec.email     = 'djberg96@gmail.com'
