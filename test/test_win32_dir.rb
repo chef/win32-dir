@@ -26,7 +26,7 @@ class TC_Win32_Dir < Test::Unit::TestCase
   end
 
   test "version number is set to expected value" do
-    assert_equal('0.4.9', Dir::VERSION)
+    assert_equal('0.5.0', Dir::VERSION)
   end
 
   test 'glob handles backslashes' do
@@ -90,21 +90,21 @@ class TC_Win32_Dir < Test::Unit::TestCase
 
   test "create_junction works as expected with ascii characters" do
     assert_nothing_raised{ Dir.create_junction(@ascii_to, @@from) }
-    assert_true(File.exists?(@ascii_to))
+    assert_true(File.exist?(@ascii_to))
     File.open(@test_file, 'w'){ |fh| fh.puts "Hello World" }
     assert_equal(Dir.entries(@@from), Dir.entries(@ascii_to))
   end
 
   test "create_junction works as expected with unicode characters" do
     assert_nothing_raised{ Dir.create_junction(@unicode_to, @@from) }
-    assert_true(File.exists?(@unicode_to))
+    assert_true(File.exist?(@unicode_to))
     File.open(@test_file, 'w'){ |fh| fh.puts "Hello World" }
     assert_equal(Dir.entries(@@from), Dir.entries(@unicode_to))
   end
 
   test "create_junction works as expected with pathname objects" do
     assert_nothing_raised{ Dir.create_junction(Pathname.new(@ascii_to), Pathname.new(@@from)) }
-    assert_true(File.exists?(@ascii_to))
+    assert_true(File.exist?(@ascii_to))
     File.open(@test_file, 'w'){ |fh| fh.puts "Hello World" }
     assert_equal(Dir.entries(@@from), Dir.entries(@ascii_to))
   end
@@ -116,25 +116,25 @@ class TC_Win32_Dir < Test::Unit::TestCase
 
   test "read_junction works as expected with ascii characters" do
     assert_nothing_raised{ Dir.create_junction(@ascii_to, @@from) }
-    assert_true(File.exists?(@ascii_to))
+    assert_true(File.exist?(@ascii_to))
     assert_equal(Dir.read_junction(@ascii_to), @@from)
   end
 
   test "read_junction works as expected with unicode characters" do
     assert_nothing_raised{ Dir.create_junction(@unicode_to, @@from) }
-    assert_true(File.exists?(@unicode_to))
+    assert_true(File.exist?(@unicode_to))
     assert_equal(Dir.read_junction(@unicode_to), @@from)
   end
 
   test "read_junction with unicode characters is joinable" do
     assert_nothing_raised{ Dir.create_junction(@unicode_to, @@from) }
-    assert_true(File.exists?(@unicode_to))
+    assert_true(File.exist?(@unicode_to))
     assert_nothing_raised{ File.join(Dir.read_junction(@unicode_to), 'foo') }
   end
 
   test "read_junction works as expected with pathname objects" do
     assert_nothing_raised{ Dir.create_junction(Pathname.new(@ascii_to), Pathname.new(@@from)) }
-    assert_true(File.exists?(@ascii_to))
+    assert_true(File.exist?(@ascii_to))
     assert_equal(Dir.read_junction(@ascii_to), @@from)
   end
 
