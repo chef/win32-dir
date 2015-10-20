@@ -1,3 +1,8 @@
+== 0.5.1 - 20-Oct-2015
+* The gem is now signed.
+* The Rakefile gem tasks now assume Rubygems 2.x.
+* Added a win32-dir.rb file for convenience.
+
 == 0.5.0 - 15-Oct-2014
 * Fixed an encoding error in an error message in the Dir.read_junction method.
   Thanks go to topac for the spot and patch.
