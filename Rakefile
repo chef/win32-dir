@@ -5,15 +5,14 @@ require 'rake/testtask'
 CLEAN.include('**/*.gem', '**/*.log')
 
 namespace 'gem' do
-  desc "Create the win32-dir gem"
+  desc "Build the win32-dir gem"
   task :create => [:clean] do
     require 'rubygems/package'
     Dir["*.gem"].each{ |f| File.delete(f) }
     spec = eval(IO.read('win32-dir.gemspec'))
-    spec.signing_key = File.join(Dir.home, '.ssh', 'gem-private_key.pem')
     Gem::Package.build(spec)
   end
-  
+
   desc "Install the win32-dir gem"
   task :install => [:create] do
     file = Dir["*.gem"].first
