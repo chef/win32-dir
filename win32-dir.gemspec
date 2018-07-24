@@ -1,5 +1,3 @@
-require 'rubygems'
-
 Gem::Specification.new do |spec|
   spec.name       = 'win32-dir'
   spec.version    = '0.5.1'
