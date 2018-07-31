@@ -5,36 +5,41 @@
 # Test suite for the win32-dir library.  You should run this test case
 # via the 'rake test' task.
 ###########################################################################
-require 'rubygems'
-gem 'test-unit'
-
-require 'test/unit'
+require 'test-unit'
 require 'win32/dir'
+require 'tmpdir'
 require 'fileutils'
+require 'pathname'
 
 class TC_Win32_Dir < Test::Unit::TestCase
   def self.startup
-    @@test_home = File.dirname(File.expand_path(__FILE__))
+    @@java = RUBY_PLATFORM == 'java'
+    @@temp = Dir.tmpdir
+    @@from = File.join(@@temp, "test_from_directory")
+    Dir.mkdir(@@from)
   end
 
   def setup
-    Dir.chdir(@@test_home) unless File.basename(Dir.pwd) == 'test'
-    @@from = File.join(Dir.pwd, "test_from_directory")
-
-    @ascii_to   = "test_to_directory"
-    @unicode_to = "Ελλάσ" # Greek - the word is 'Hellas'
+    @ascii_to   = File.join(@@temp, "test_to_directory")
+    @unicode_to = File.join(@@temp, "Ελλάσ")
     @test_file  = File.join(@@from, "test.txt")
-    Dir.mkdir(@@from)
   end
-   
-  def test_version
-    assert_equal('0.3.7', Dir::VERSION)
+
+  test "version number is set to expected value" do
+    assert_equal('0.5.1', Dir::VERSION)
   end
 
   test 'glob handles backslashes' do
     pattern = "C:\\Program Files\\Common Files\\System\\*.dll"
     assert_nothing_raised{ Dir.glob(pattern) }
     assert_true(Dir.glob(pattern).size > 0)
+  end
+
+  test 'glob handles multiple strings' do
+    pattern1 = "C:\\Program Files\\Common Files\\System\\*.dll"
+    pattern2 = "C:\\Windows\\*.exe"
+    assert_nothing_raised{ Dir.glob([pattern1, pattern2]) }
+    assert_true(Dir.glob([pattern1, pattern2]).size > 0)
   end
 
   test 'glob still observes flags' do
@@ -48,332 +53,414 @@ class TC_Win32_Dir < Test::Unit::TestCase
     assert_true(array.include?('.'))
   end
 
+  test 'glob handles Pathname objects' do
+    pattern1 = Pathname.new("C:\\Program Files\\Common Files\\System\\*.dll")
+    pattern2 = Pathname.new("C:\\Windows\\*.exe")
+    assert_nothing_raised{ Dir.glob([pattern1, pattern2]) }
+    assert_true(Dir.glob([pattern1, pattern2]).size > 0)
+  end
+
+  test "glob requires a stringy argument" do
+    assert_raise(TypeError){ Dir.glob(nil) }
+  end
+
   test 'ref handles backslashes' do
     pattern = "C:\\Program Files\\Common Files\\System\\*.dll"
     assert_nothing_raised{ Dir[pattern] }
     assert_true(Dir[pattern].size > 0)
   end
-  
-  def test_create_junction_basic
+
+  test 'ref handles multiple arguments' do
+    pattern1 = "C:\\Program Files\\Common Files\\System\\*.dll"
+    pattern2 = "C:\\Windows\\*.exe"
+    assert_nothing_raised{ Dir[pattern1, pattern2] }
+    assert_true(Dir[pattern1, pattern2].size > 0)
+  end
+
+  test 'ref handles pathname arguments' do
+    pattern1 = Pathname.new("C:\\Program Files\\Common Files\\System\\*.dll")
+    pattern2 = Pathname.new("C:\\Windows\\*.exe")
+    assert_nothing_raised{ Dir[pattern1, pattern2] }
+    assert_true(Dir[pattern1, pattern2].size > 0)
+  end
+
+  test "create_junction basic functionality" do
     assert_respond_to(Dir, :create_junction)
   end
 
-  def test_create_junction_ascii
+  test "create_junction works as expected with ascii characters" do
     assert_nothing_raised{ Dir.create_junction(@ascii_to, @@from) }
-    assert_true(File.exists?(@ascii_to))
+    assert_true(File.exist?(@ascii_to))
     File.open(@test_file, 'w'){ |fh| fh.puts "Hello World" }
     assert_equal(Dir.entries(@@from), Dir.entries(@ascii_to))
   end
 
-  def test_create_junction_unicode
+  test "create_junction works as expected with unicode characters" do
     assert_nothing_raised{ Dir.create_junction(@unicode_to, @@from) }
-    assert_true(File.exists?(@unicode_to))
+    assert_true(File.exist?(@unicode_to))
     File.open(@test_file, 'w'){ |fh| fh.puts "Hello World" }
     assert_equal(Dir.entries(@@from), Dir.entries(@unicode_to))
   end
-   
-  def test_is_junction
+
+  test "create_junction works as expected with pathname objects" do
+    assert_nothing_raised{ Dir.create_junction(Pathname.new(@ascii_to), Pathname.new(@@from)) }
+    assert_true(File.exist?(@ascii_to))
+    File.open(@test_file, 'w'){ |fh| fh.puts "Hello World" }
+    assert_equal(Dir.entries(@@from), Dir.entries(@ascii_to))
+  end
+
+  test "create_junction requires stringy arguments" do
+    assert_raise(TypeError){ Dir.create_junction(nil, @@from) }
+    assert_raise(TypeError){ Dir.create_junction(@ascii_to, nil) }
+  end
+
+  test "read_junction works as expected with ascii characters" do
+    assert_nothing_raised{ Dir.create_junction(@ascii_to, @@from) }
+    assert_true(File.exist?(@ascii_to))
+    assert_equal(Dir.read_junction(@ascii_to), @@from)
+  end
+
+  test "read_junction works as expected with unicode characters" do
+    assert_nothing_raised{ Dir.create_junction(@unicode_to, @@from) }
+    assert_true(File.exist?(@unicode_to))
+    assert_equal(Dir.read_junction(@unicode_to), @@from)
+  end
+
+  test "read_junction with unicode characters is joinable" do
+    assert_nothing_raised{ Dir.create_junction(@unicode_to, @@from) }
+    assert_true(File.exist?(@unicode_to))
+    assert_nothing_raised{ File.join(Dir.read_junction(@unicode_to), 'foo') }
+  end
+
+  test "read_junction works as expected with pathname objects" do
+    assert_nothing_raised{ Dir.create_junction(Pathname.new(@ascii_to), Pathname.new(@@from)) }
+    assert_true(File.exist?(@ascii_to))
+    assert_equal(Dir.read_junction(@ascii_to), @@from)
+  end
+
+  test "read_junction requires a stringy argument" do
+    assert_raise(TypeError){ Dir.read_junction(nil) }
+    assert_raise(TypeError){ Dir.read_junction([]) }
+  end
+
+  test "junction? method returns boolean value" do
     assert_respond_to(Dir, :junction?)
     assert_nothing_raised{ Dir.create_junction(@ascii_to, @@from) }
-    assert_equal(false, Dir.junction?(@@from))
-    assert_equal(true, Dir.junction?(@ascii_to))
+    assert_false(Dir.junction?(@@from))
+    assert_true(Dir.junction?(@ascii_to))
+    assert_true(Dir.junction?(Pathname.new(@ascii_to)))
   end
 
-  def test_reparse_dir_alias
-    assert_respond_to(Dir, :reparse_dir?) # alias
-    assert_equal(true, Dir.method(:reparse_dir?) == Dir.method(:junction?))
+  test "reparse_dir? is an aliase for junction?" do
+    assert_respond_to(Dir, :reparse_dir?)
+    assert_true(Dir.method(:reparse_dir?) == Dir.method(:junction?))
   end
-   
-  def test_is_empty
+
+  test "empty? method returns expected result" do
     assert_respond_to(Dir, :empty?)
-    assert_equal(false, Dir.empty?("C:\\")) # One would think
-    assert_equal(true, Dir.empty?(@@from))
+    assert_false(Dir.empty?("C:\\")) # One would think
+    assert_true(Dir.empty?(@@from))
+    assert_true(Dir.empty?(Pathname.new(@@from)))
   end
 
-  def test_pwd_basic
+  test "pwd basic functionality" do
+    omit_if(@@java)
     assert_respond_to(Dir, :pwd)
     assert_nothing_raised{ Dir.pwd }
     assert_kind_of(String, Dir.pwd)
   end
 
-  def test_pwd_short_path
+  test "pwd returns full path even if short path was just used" do
+    omit_if(@@java)
     Dir.chdir("C:\\Progra~1")
     assert_equal("C:\\Program Files", Dir.pwd)
   end
 
-  def test_pwd_long_path
+  test "pwd returns full path if long path was just used" do
+    omit_if(@@java)
     Dir.chdir("C:\\Program Files")
     assert_equal("C:\\Program Files", Dir.pwd)
   end
- 
-  def test_pwd_caps
+
+  test "pwd uses standard case conventions" do
+    omit_if(@@java)
     Dir.chdir("C:\\PROGRAM FILES")
     assert_equal("C:\\Program Files", Dir.pwd)
   end
-   
-  def test_pwd_forward_slash
+
+  test "pwd converts forward slashes to backslashes" do
+    omit_if(@@java)
     Dir.chdir("C:/Program Files")
     assert_equal("C:\\Program Files", Dir.pwd)
   end
-   
-  def test_pwd_is_proper_alias
+
+  test "pwd and getwd are aliases" do
+    omit_if(@@java)
     assert_true(Dir.method(:getwd) == Dir.method(:pwd))
   end
 
-  def test_admintools
+  test "admintools constant is set" do
     assert_not_nil(Dir::ADMINTOOLS)
     assert_kind_of(String, Dir::ADMINTOOLS)
   end
-   
-  def test_altstartup
+
+  test "altstartup constant is set" do
     assert_not_nil(Dir::ALTSTARTUP)
     assert_kind_of(String, Dir::ALTSTARTUP)
   end
-   
-  def test_appdata
+
+  test "appdata constant is set" do
     assert_not_nil(Dir::APPDATA)
     assert_kind_of(String, Dir::APPDATA)
   end
-   
-  def test_bitbucket
+
+  test "bitbucket constant is set" do
     assert_not_nil(Dir::BITBUCKET)
     assert_kind_of(String, Dir::BITBUCKET)
   end
-   
-  def test_cdburn_area
+
+  test "cdburn area is set" do
     assert_not_nil(Dir::CDBURN_AREA)
     assert_kind_of(String, Dir::CDBURN_AREA)
   end
-   
-  def test_common_admintools
+
+  test "common admintools is set" do
     assert_not_nil(Dir::COMMON_ADMINTOOLS)
     assert_kind_of(String, Dir::COMMON_ADMINTOOLS)
   end
-   
-  def test_common_altstartup
+
+  test "common_altstartup constant is set" do
     assert_not_nil(Dir::COMMON_ALTSTARTUP)
     assert_kind_of(String, Dir::COMMON_ALTSTARTUP)
   end
-   
-  def test_common_appdata
+
+  test "common_appdata constant is set" do
     assert_not_nil(Dir::COMMON_APPDATA)
     assert_kind_of(String, Dir::COMMON_APPDATA)
   end
-   
-  def test_common_desktopdirectory
+
+  test "common desktopdirectory constant is set" do
     assert_not_nil(Dir::COMMON_DESKTOPDIRECTORY)
     assert_kind_of(String, Dir::COMMON_DESKTOPDIRECTORY)
   end
-   
-  def test_common_documents
+
+  test "common_documents constant is set" do
     assert_not_nil(Dir::COMMON_DOCUMENTS)
     assert_kind_of(String, Dir::COMMON_DOCUMENTS)
   end
-   
-  def test_common_favorites
+
+  test "common_favorites constant is set" do
     assert_not_nil(Dir::COMMON_FAVORITES)
     assert_kind_of(String, Dir::COMMON_FAVORITES)
   end
-   
-  def test_common_music
+
+  test "common_music constant is set" do
     assert_not_nil(Dir::COMMON_MUSIC)
     assert_kind_of(String, Dir::COMMON_MUSIC)
   end
-   
-  def test_common_pictures
+
+  test "common_pictures constant is set" do
     assert_not_nil(Dir::COMMON_PICTURES)
     assert_kind_of(String, Dir::COMMON_PICTURES)
   end
-   
-  def test_common_programs
+
+  test "common_programs constant is set" do
     assert_not_nil(Dir::COMMON_PROGRAMS)
     assert_kind_of(String, Dir::COMMON_PROGRAMS)
   end
-  
-  def test_common_startmenu
+
+  test "common_startmenu constant is set" do
     assert_not_nil(Dir::COMMON_STARTMENU)
     assert_kind_of(String, Dir::COMMON_STARTMENU)
   end
-   
-  def test_common_startup
+
+  test "common_startup constant is set" do
     assert_not_nil(Dir::COMMON_STARTUP)
     assert_kind_of(String, Dir::COMMON_STARTUP)
   end
-  
-  def test_common_templates
+
+  test "common_templates constant is set" do
     assert_not_nil(Dir::COMMON_TEMPLATES)
     assert_kind_of(String, Dir::COMMON_TEMPLATES)
   end
-   
-  def test_common_video
+
+  test "common_video constant is set" do
     assert_not_nil(Dir::COMMON_VIDEO)
     assert_kind_of(String, Dir::COMMON_VIDEO)
   end
-   
-  def test_controls
+
+  test "controls constant is set" do
     assert_not_nil(Dir::CONTROLS)
     assert_kind_of(String, Dir::CONTROLS)
   end
-   
-  def test_cookies
+
+  test "cookies constant is set" do
     assert_not_nil(Dir::COOKIES)
     assert_kind_of(String, Dir::COOKIES)
   end
-   
-  def test_desktop
+
+  test "desktop constant is set" do
     assert_not_nil(Dir::DESKTOP)
     assert_kind_of(String, Dir::DESKTOP)
   end
-   
-  def test_desktopdirectory
+
+  test "desktopdirectory is set" do
     assert_not_nil(Dir::DESKTOPDIRECTORY)
     assert_kind_of(String, Dir::DESKTOPDIRECTORY)
   end
-   
-  def test_drives
+
+  test "drives constant is set" do
     assert_not_nil(Dir::DRIVES)
     assert_kind_of(String, Dir::DRIVES)
   end
 
-  def test_favorites
+  test "favorites constant is set" do
     assert_not_nil(Dir::FAVORITES)
     assert_kind_of(String, Dir::FAVORITES)
   end
-   
-  def test_fonts
+
+  test "fonts constant is set" do
     assert_not_nil(Dir::FONTS)
     assert_kind_of(String, Dir::FONTS)
   end
-   
-  def test_history
+
+  test "history constant is set" do
     assert_not_nil(Dir::HISTORY)
     assert_kind_of(String, Dir::HISTORY)
   end
-   
-  def test_internet
+
+  test "internet constant is set" do
     assert_not_nil(Dir::INTERNET)
     assert_kind_of(String, Dir::INTERNET)
   end
-   
-  def test_internet_cache
+
+  test "internet_cache constant is set" do
     assert_not_nil(Dir::INTERNET_CACHE)
     assert_kind_of(String, Dir::INTERNET_CACHE)
   end
-   
-  def test_local_appdata
+
+  test "local_appdata constant is set" do
     assert_not_nil(Dir::LOCAL_APPDATA)
     assert_kind_of(String, Dir::LOCAL_APPDATA)
   end
-   
-  def test_mydocuments
+
+  test "mydocuments constant is set" do
     assert_not_nil(Dir::MYDOCUMENTS)
     assert_kind_of(String, Dir::MYDOCUMENTS)
   end
-   
-  def test_local_mymusic
+
+  test "mymusic constant is set" do
     assert_not_nil(Dir::MYMUSIC)
     assert_kind_of(String, Dir::MYMUSIC)
   end
-   
-  def test_local_mypictures
+
+  test "mypictures constant is set" do
     assert_not_nil(Dir::MYPICTURES)
     assert_kind_of(String, Dir::MYPICTURES)
   end
-   
-  def test_local_myvideo
+
+  test "myvideo constant is set" do
     assert_not_nil(Dir::MYVIDEO)
     assert_kind_of(String, Dir::MYVIDEO)
   end
-   
-  def test_nethood
+
+  test "nethood constant is set" do
     assert_not_nil(Dir::NETHOOD)
     assert_kind_of(String, Dir::NETHOOD)
   end
-   
-  def test_network
+
+  test "network constant is set" do
     assert_not_nil(Dir::NETWORK)
     assert_kind_of(String, Dir::NETWORK)
   end
 
-  def test_personal
+  test "personal constant is set" do
     assert_not_nil(Dir::PERSONAL)
     assert_kind_of(String, Dir::PERSONAL)
   end
-   
-  def test_printers
+
+  test "printers cosntant is set" do
     assert_not_nil(Dir::PRINTERS)
     assert_kind_of(String, Dir::PRINTERS)
   end
-   
-  def test_printhood
+
+  test "printhood constant is set" do
     assert_not_nil(Dir::PRINTHOOD)
     assert_kind_of(String, Dir::PRINTHOOD)
   end
-   
-  def test_profile
+
+  test "profile constant is set" do
     assert_not_nil(Dir::PROFILE)
     assert_kind_of(String, Dir::PROFILE)
   end
-   
-  # Doesn't appear to actually exist
-  #def test_profiles
-  #  assert_not_nil(Dir::PROFILES)
-  #  assert_kind_of(String,Dir::PROFILES)
-  #end
-   
-  def test_program_files
+
+  test "program_files constant is set" do
     assert_not_nil(Dir::PROGRAM_FILES)
     assert_kind_of(String, Dir::PROGRAM_FILES)
   end
-   
-  def test_program_files_common
+
+  test "program_files_common constant is set" do
     assert_not_nil(Dir::PROGRAM_FILES_COMMON)
     assert_kind_of(String, Dir::PROGRAM_FILES_COMMON)
   end
-   
-  def test_programs
+
+  test "programs constant is set" do
     assert_not_nil(Dir::PROGRAMS)
     assert_kind_of(String, Dir::PROGRAMS)
   end
-   
-  def test_recent
+
+  test "recent constant is set" do
     assert_not_nil(Dir::RECENT)
     assert_kind_of(String, Dir::RECENT)
   end
-  
-  def test_sendto
+
+  test "sendto constant is set" do
     assert_not_nil(Dir::SENDTO)
     assert_kind_of(String, Dir::SENDTO)
   end
-   
-  def test_startmenu
+
+  test "startmenu constant is set" do
     assert_not_nil(Dir::STARTMENU)
     assert_kind_of(String, Dir::STARTMENU)
   end
-   
-  def test_startup
+
+  test "startup constant is set" do
     assert_not_nil(Dir::STARTUP)
     assert_kind_of(String, Dir::STARTUP)
   end
-   
-  def test_system
+
+  test "system constant is set" do
     assert_not_nil(Dir::SYSTEM)
     assert_kind_of(String, Dir::SYSTEM)
   end
-   
-  def test_templates
+
+  test "templates constant is set" do
     assert_not_nil(Dir::TEMPLATES)
     assert_kind_of(String, Dir::TEMPLATES)
   end
 
-  def test_windows_dir
+  test "windows constant is set" do
     assert_not_nil(Dir::WINDOWS)
     assert_kind_of(String, Dir::WINDOWS)
+  end
+
+  test "constants are ascii_compatible?" do
+    assert_true(Dir::COMMON_APPDATA.encoding.ascii_compatible?)
+    assert_nothing_raised{ File.join(Dir::COMMON_APPDATA, 'foo') }
+  end
+
+  test "ffi functions are private" do
+    assert_not_respond_to(Dir, :SHGetFolderPathW)
   end
 
   def teardown
     FileUtils.rm_rf(@ascii_to)
     FileUtils.rm_rf(@unicode_to)
+  end
+
+  def self.shutdown
     FileUtils.rm_rf(@@from)
+    @@test_home = nil
+    @@from = nil
   end
 end

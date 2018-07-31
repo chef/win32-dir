@@ -1,22 +1,21 @@
-require 'rubygems'
-
 Gem::Specification.new do |spec|
-  spec.name      = 'win32-dir'
-  spec.version   = '0.3.7'
-  spec.authors   = ['Daniel J. Berger', 'Park Heesob']
-  spec.license   = 'Artistic 2.0'
-  spec.email     = 'djberg96@gmail.com'
-  spec.homepage  = 'http://www.rubyforge.org/projects/win32utils'
-  spec.platform  = Gem::Platform::RUBY
-  spec.summary   = 'Extra constants and methods for the Dir class on Windows.'
-  spec.test_file = 'test/test_win32_dir.rb'
-  spec.files     = Dir['**/*'].reject{ |f| f.include?('git') }
+  spec.name       = 'win32-dir'
+  spec.version    = '0.5.1'
+  spec.authors    = ['Daniel J. Berger', 'Park Heesob']
+  spec.license    = 'Artistic 2.0'
+  spec.email      = 'djberg96@gmail.com'
+  spec.homepage   = 'http://github.com/chef/win32-dir'
+  spec.summary    = 'Extra constants and methods for the Dir class on Windows.'
+  spec.test_file  = 'test/test_win32_dir.rb'
+  spec.files      = Dir['**/*'].reject{ |f| f.include?('git') }
 
-  spec.rubyforge_project = 'win32utils'
-  spec.extra_rdoc_files  = ['README', 'CHANGES', 'MANIFEST']
+  spec.extra_rdoc_files  = ['README.md', 'CHANGES', 'MANIFEST']
+  spec.required_ruby_version = '>= 1.9.2'
 
-  spec.add_dependency('windows-pr', '>= 1.0.9')
-  spec.add_development_dependency('test-unit', '>= 2.0.6')
+  spec.add_dependency('ffi', '>= 1.0.0')
+
+  spec.add_development_dependency('rake')
+  spec.add_development_dependency('test-unit', '>= 2.4.0')
 
   spec.description = <<-EOF
     The win32-dir library provides extra methods and constants for the
