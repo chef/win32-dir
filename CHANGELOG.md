@@ -1,7 +1,17 @@
+<!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
+
+# win32-dir Changelog
+
+<!-- latest_release 0.5.1 -->
+<!-- latest_release -->
+<!-- release_rollup since=0.5.1 -->
+<!-- release_rollup -->
+<!-- latest_stable_release -->
 == 0.5.1 - 20-Oct-2015
 * The gem is now signed.
 * The Rakefile gem tasks now assume Rubygems 2.x.
 * Added a win32-dir.rb file for convenience.
+<!-- latest_stable_release -->
 
 == 0.5.0 - 15-Oct-2014
 * Fixed an encoding error in an error message in the Dir.read_junction method.

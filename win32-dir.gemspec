@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.test_file  = 'test/test_win32_dir.rb'
   spec.files      = Dir['**/*'].reject{ |f| f.include?('git') }
 
-  spec.extra_rdoc_files  = ['README.md', 'CHANGES', 'MANIFEST']
+  spec.extra_rdoc_files  = ['README.md', 'CHANGELOG.md']
   spec.required_ruby_version = '>= 1.9.2'
 
   spec.add_dependency('ffi', '>= 1.0.0')
