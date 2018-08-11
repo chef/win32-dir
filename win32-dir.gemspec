@@ -14,9 +14,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency('ffi', '>= 1.0.0')
 
-  spec.add_development_dependency('rake')
-  spec.add_development_dependency('test-unit', '>= 2.4.0')
-
   spec.description = <<-EOF
     The win32-dir library provides extra methods and constants for the
     builtin Dir class. The constants provide a convenient way to identify
