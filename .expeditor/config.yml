@@ -1,0 +1,3 @@
+release_branch:
+  - ffi:
+    version_constraint: "*"
