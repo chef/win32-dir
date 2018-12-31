@@ -1,6 +1,8 @@
+require_relative "lib/win32/dir/version"
+
 Gem::Specification.new do |spec|
   spec.name       = "win32-dir"
-  spec.version    = "0.5.1"
+  spec.version    = Win32::Dir::VERSION
   spec.authors    = ["Daniel J. Berger", "Park Heesob"]
   spec.license    = "Artistic 2.0"
   spec.email      = "djberg96@gmail.com"
