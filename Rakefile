@@ -1,19 +1,19 @@
-require 'rake/clean'
-require 'rake/testtask'
+require "rake/clean"
+require "rake/testtask"
 
-CLEAN.include('**/*.gem', '**/*.log')
+CLEAN.include("**/*.gem", "**/*.log")
 
-namespace 'gem' do
+namespace "gem" do
   desc "Build the win32-dir gem"
-  task :create => [:clean] do
-    require 'rubygems/package'
-    Dir["*.gem"].each{ |f| File.delete(f) }
-    spec = eval(IO.read('win32-dir.gemspec'))
+  task create: [:clean] do
+    require "rubygems/package"
+    Dir["*.gem"].each { |f| File.delete(f) }
+    spec = eval(IO.read("win32-dir.gemspec"))
     Gem::Package.build(spec)
   end
 
   desc "Install the win32-dir gem"
-  task :install => [:create] do
+  task install: [:create] do
     file = Dir["*.gem"].first
     sh "gem install -l #{file}"
   end
@@ -43,4 +43,4 @@ task :console do
   IRB.start
 end
 
-task :default => :test
+task default: :test

@@ -1,4 +1,4 @@
-require 'ffi'
+require "ffi"
 
 module Dir::Constants
   include FFI::Library

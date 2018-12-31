@@ -1,6 +1,6 @@
-require_relative 'dir/constants'
-require_relative 'dir/functions'
-require_relative 'dir/structs'
+require_relative "dir/constants"
+require_relative "dir/functions"
+require_relative "dir/structs"
 
 class Dir
   include Dir::Structs
@@ -12,69 +12,69 @@ class Dir
 
   # CSIDL constants
   csidl = Hash[
-    'DESKTOP',                  0x0000,
-    'INTERNET',                 0x0001,
-    'PROGRAMS',                 0x0002,
-    'CONTROLS',                 0x0003,
-    'PRINTERS',                 0x0004,
-    'PERSONAL',                 0x0005,
-    'FAVORITES',                0x0006,
-    'STARTUP',                  0x0007,
-    'RECENT',                   0x0008,
-    'SENDTO',                   0x0009,
-    'BITBUCKET',                0x000a,
-    'STARTMENU',                0x000b,
-    'MYDOCUMENTS',              0x000c,
-    'MYMUSIC',                  0x000d,
-    'MYVIDEO',                  0x000e,
-    'DESKTOPDIRECTORY',         0x0010,
-    'DRIVES',                   0x0011,
-    'NETWORK',                  0x0012,
-    'NETHOOD',                  0x0013,
-    'FONTS',                    0x0014,
-    'TEMPLATES',                0x0015,
-    'COMMON_STARTMENU',         0x0016,
-    'COMMON_PROGRAMS',          0X0017,
-    'COMMON_STARTUP',           0x0018,
-    'COMMON_FAVORITES',         0x001f,
-    'COMMON_DESKTOPDIRECTORY',  0x0019,
-    'APPDATA',                  0x001a,
-    'PRINTHOOD',                0x001b,
-    'LOCAL_APPDATA',            0x001c,
-    'ALTSTARTUP',               0x001d,
-    'COMMON_ALTSTARTUP',        0x001e,
-    'INTERNET_CACHE',           0x0020,
-    'COOKIES',                  0x0021,
-    'HISTORY',                  0x0022,
-    'COMMON_APPDATA',           0x0023,
-    'WINDOWS',                  0x0024,
-    'SYSTEM',                   0x0025,
-    'PROGRAM_FILES',            0x0026,
-    'MYPICTURES',               0x0027,
-    'PROFILE',                  0x0028,
-    'SYSTEMX86',                0x0029,
-    'PROGRAM_FILESX86',         0x002a,
-    'PROGRAM_FILES_COMMON',     0x002b,
-    'PROGRAM_FILES_COMMONX86',  0x002c,
-    'COMMON_TEMPLATES',         0x002d,
-    'COMMON_DOCUMENTS',         0x002e,
-    'CONNECTIONS',              0x0031,
-    'COMMON_MUSIC',             0x0035,
-    'COMMON_PICTURES',          0x0036,
-    'COMMON_VIDEO',             0x0037,
-    'RESOURCES',                0x0038,
-    'RESOURCES_LOCALIZED',      0x0039,
-    'COMMON_OEM_LINKS',         0x003a,
-    'CDBURN_AREA',              0x003b,
-    'COMMON_ADMINTOOLS',        0x002f,
-    'ADMINTOOLS',               0x0030
+    "DESKTOP",                  0x0000,
+    "INTERNET",                 0x0001,
+    "PROGRAMS",                 0x0002,
+    "CONTROLS",                 0x0003,
+    "PRINTERS",                 0x0004,
+    "PERSONAL",                 0x0005,
+    "FAVORITES",                0x0006,
+    "STARTUP",                  0x0007,
+    "RECENT",                   0x0008,
+    "SENDTO",                   0x0009,
+    "BITBUCKET",                0x000a,
+    "STARTMENU",                0x000b,
+    "MYDOCUMENTS",              0x000c,
+    "MYMUSIC",                  0x000d,
+    "MYVIDEO",                  0x000e,
+    "DESKTOPDIRECTORY",         0x0010,
+    "DRIVES",                   0x0011,
+    "NETWORK",                  0x0012,
+    "NETHOOD",                  0x0013,
+    "FONTS",                    0x0014,
+    "TEMPLATES",                0x0015,
+    "COMMON_STARTMENU",         0x0016,
+    "COMMON_PROGRAMS",          0X0017,
+    "COMMON_STARTUP",           0x0018,
+    "COMMON_FAVORITES",         0x001f,
+    "COMMON_DESKTOPDIRECTORY",  0x0019,
+    "APPDATA",                  0x001a,
+    "PRINTHOOD",                0x001b,
+    "LOCAL_APPDATA",            0x001c,
+    "ALTSTARTUP",               0x001d,
+    "COMMON_ALTSTARTUP",        0x001e,
+    "INTERNET_CACHE",           0x0020,
+    "COOKIES",                  0x0021,
+    "HISTORY",                  0x0022,
+    "COMMON_APPDATA",           0x0023,
+    "WINDOWS",                  0x0024,
+    "SYSTEM",                   0x0025,
+    "PROGRAM_FILES",            0x0026,
+    "MYPICTURES",               0x0027,
+    "PROFILE",                  0x0028,
+    "SYSTEMX86",                0x0029,
+    "PROGRAM_FILESX86",         0x002a,
+    "PROGRAM_FILES_COMMON",     0x002b,
+    "PROGRAM_FILES_COMMONX86",  0x002c,
+    "COMMON_TEMPLATES",         0x002d,
+    "COMMON_DOCUMENTS",         0x002e,
+    "CONNECTIONS",              0x0031,
+    "COMMON_MUSIC",             0x0035,
+    "COMMON_PICTURES",          0x0036,
+    "COMMON_VIDEO",             0x0037,
+    "RESOURCES",                0x0038,
+    "RESOURCES_LOCALIZED",      0x0039,
+    "COMMON_OEM_LINKS",         0x003a,
+    "CDBURN_AREA",              0x003b,
+    "COMMON_ADMINTOOLS",        0x002f,
+    "ADMINTOOLS",               0x0030
   ]
 
   # Dynamically set each of the CSIDL constants
-  csidl.each{ |key, value|
+  csidl.each do |key, value|
     buf  = 0.chr * 1024
     path = nil
-    buf.encode!('UTF-16LE')
+    buf.encode!("UTF-16LE")
 
     if SHGetFolderPathW(0, value, 0, 0, buf) == 0 # Current path
       path = buf.strip
@@ -96,9 +96,9 @@ class Dir
     begin
       Dir.const_set(key, path.encode(Encoding.default_external)) if path
     rescue Encoding::UndefinedConversionError
-      Dir.const_set(key, path.encode('UTF-8')) if path
+      Dir.const_set(key, path.encode("UTF-8")) if path
     end
-  }
+  end
 
   # Set Dir::MYDOCUMENTS to the same as Dir::PERSONAL if undefined
   unless defined? MYDOCUMENTS
@@ -113,7 +113,7 @@ class Dir
     #
     def glob(glob_pattern, flags = 0, &block)
       if glob_pattern.is_a?(Array)
-        temp = glob_pattern.map!{ |pattern| string_check(pattern).tr("\\", "/") }
+        temp = glob_pattern.map! { |pattern| string_check(pattern).tr("\\", "/") }
       else
         temp = string_check(glob_pattern).tr("\\", "/")
       end
@@ -127,12 +127,12 @@ class Dir
     # backslashes in path names.
     #
     def [](*glob_patterns)
-      temp = glob_patterns.map!{ |pattern| "#{pattern}".tr("\\", "/") }
+      temp = glob_patterns.map! { |pattern| "#{pattern}".tr("\\", "/") }
       old_ref(*temp)
     end
 
     # JRuby normalizes the path by default.
-    unless RUBY_PLATFORM == 'java'
+    unless RUBY_PLATFORM == "java"
       alias oldgetwd getwd
       alias oldpwd pwd
 
@@ -175,7 +175,7 @@ class Dir
         begin
           path.encode(Encoding.default_external)
         rescue Encoding::UndefinedConversionError
-          path.encode('UTF-8')
+          path.encode("UTF-8")
         end
       end
 
@@ -195,7 +195,7 @@ class Dir
     to   = string_check(to).wincode
     from = string_check(from).wincode
 
-    from_path = (0.chr * 1024).encode('UTF-16LE')
+    from_path = (0.chr * 1024).encode("UTF-16LE")
 
     length = GetFullPathNameW(from, from_path.size, from_path, nil)
 
@@ -205,7 +205,7 @@ class Dir
       from_path.strip!
     end
 
-    to_path = (0.chr * 1024).encode('UTF-16LE')
+    to_path = (0.chr * 1024).encode("UTF-16LE")
 
     length = GetFullPathNameW(to, to_path.size, to_path, nil)
 
@@ -239,7 +239,7 @@ class Dir
         raise SystemCallError.new("CreateFileW", FFI.errno)
       end
 
-      target = "\\??\\".encode('UTF-16LE') + from_path
+      target = "\\??\\".encode("UTF-16LE") + from_path
 
       rdb = REPARSE_JDATA_BUFFER.new
       rdb[:ReparseTag] = 2684354563 # IO_REPARSE_TAG_MOUNT_POINT
@@ -294,7 +294,7 @@ class Dir
 
     junction = string_check(junction).wincode
 
-    junction_path = (0.chr * 1024).encode('UTF-16LE')
+    junction_path = (0.chr * 1024).encode("UTF-16LE")
 
     length = GetFullPathNameW(junction, junction_path.size, junction_path, nil)
 
@@ -328,7 +328,7 @@ class Dir
       rdb[:SubstituteNameLength] = 0
       rdb[:PrintNameOffset] = 0
       rdb[:PrintNameLength] = 0
-      rdb[:PathBuffer] = ''
+      rdb[:PathBuffer] = ""
 
       bytes = FFI::MemoryPointer.new(:ulong)
 
@@ -356,13 +356,13 @@ class Dir
 
     # MSDN says print and substitute names can be in any order
     jname = (rdb[:PathBuffer].to_ptr + rdb[:SubstituteNameOffset]).read_string(rdb[:SubstituteNameLength])
-    jname = jname.bytes.to_a.pack('C*')
+    jname = jname.bytes.to_a.pack("C*")
     jname = jname.force_encoding("UTF-16LE")
     raise "Invalid junction name: #{jname.encode('UTF-8')}" unless jname[0..3] == "\\??\\".encode("UTF-16LE")
     begin
       File.expand_path(jname[4..-1].encode(Encoding.default_external))
     rescue Encoding::UndefinedConversionError
-      File.expand_path(jname[4..-1].encode('UTF-8'))
+      File.expand_path(jname[4..-1].encode("UTF-8"))
     end
   end
 
@@ -383,9 +383,8 @@ class Dir
 
     # Only directories with a reparse point attribute can be junctions
     if attrib == INVALID_FILE_ATTRIBUTES ||
-       attrib & FILE_ATTRIBUTE_DIRECTORY == 0 ||
-       attrib & FILE_ATTRIBUTE_REPARSE_POINT == 0
-    then
+        attrib & FILE_ATTRIBUTE_DIRECTORY == 0 ||
+        attrib & FILE_ATTRIBUTE_REPARSE_POINT == 0
       bool = false
     end
 
