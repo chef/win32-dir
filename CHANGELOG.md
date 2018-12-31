@@ -17,6 +17,12 @@
 
 #### Merged Pull Requests
 - Require Ruby 2.2 and only ship required libs [#20](https://github.com/chef/win32-dir/pull/20) ([tas50](https://github.com/tas50))
+- This gem is now maintained by Chef Software and released using our Expeditor tooling
+- The master branch is now the default release branch once again
+- Add new rake tasks for debugging
+- Added the Chef code of conduct to the repo
+- The readme and changelog are now in markdown format
+- Code signing of the gem has been removed
 
 ## 0.5.1 - 20-Oct-2015
 * The gem is now signed.
