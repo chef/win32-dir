@@ -2,25 +2,22 @@
 
 # win32-dir Changelog
 
-<!-- latest_release 0.6.3 -->
+<!-- latest_release -->
+<!-- latest_release -->
+<!-- release_rollup -->
+<!-- release_rollup -->
+<!-- latest_stable_release -->
 ## [win32-dir-0.6.3](https://github.com/chef/win32-dir/tree/win32-dir-0.6.3) (2018-12-31)
 
 #### Merged Pull Requests
+- Resolve chefstyle warnings [#22](https://github.com/chef/win32-dir/pull/22) ([tas50](https://github.com/tas50))
 - Move version into its own ruby file [#23](https://github.com/chef/win32-dir/pull/23) ([tas50](https://github.com/tas50))
-<!-- latest_release -->
-<!-- release_rollup since=0.5.1 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Move version into its own ruby file [#23](https://github.com/chef/win32-dir/pull/23) ([tas50](https://github.com/tas50)) <!-- 0.6.3 -->
-- Resolve chefstyle warnings [#22](https://github.com/chef/win32-dir/pull/22) ([tas50](https://github.com/tas50)) <!-- 0.6.2 -->
-<!-- release_rollup -->
 <!-- latest_stable_release -->
+
 ## [win32-dir-0.6.1](https://github.com/chef/win32-dir/tree/win32-dir-0.6.1) (2018-12-31)
 
 #### Merged Pull Requests
 - Fix the version bumping via expeditor [#21](https://github.com/chef/win32-dir/pull/21) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [win32-dir-0.6.0](https://github.com/chef/win32-dir/tree/win32-dir-0.6.0) (2018-12-31)
 
