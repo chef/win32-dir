@@ -8,7 +8,7 @@ class Dir
   extend Dir::Functions
 
   # The version of the win32-dir library.
-  VERSION = "0.5.1"
+  VERSION = "0.6.1"
 
   # CSIDL constants
   csidl = Hash[
