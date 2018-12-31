@@ -5,15 +5,15 @@
 # Test suite for the win32-dir library.  You should run this test case
 # via the 'rake test' task.
 ###########################################################################
-require 'test-unit'
-require 'win32/dir'
-require 'tmpdir'
-require 'fileutils'
-require 'pathname'
+require "test-unit"
+require "win32/dir"
+require "tmpdir"
+require "fileutils"
+require "pathname"
 
 class TC_Win32_Dir < Test::Unit::TestCase
   def self.startup
-    @@java = RUBY_PLATFORM == 'java'
+    @@java = RUBY_PLATFORM == "java"
     @@temp = Dir.tmpdir
     @@from = File.join(@@temp, "test_from_directory")
     Dir.mkdir(@@from)
@@ -26,61 +26,61 @@ class TC_Win32_Dir < Test::Unit::TestCase
   end
 
   test "version number is set to expected value" do
-    assert_equal('0.5.1', Dir::VERSION)
+    assert_equal("0.5.1", Dir::VERSION)
   end
 
-  test 'glob handles backslashes' do
+  test "glob handles backslashes" do
     pattern = "C:\\Program Files\\Common Files\\System\\*.dll"
-    assert_nothing_raised{ Dir.glob(pattern) }
+    assert_nothing_raised { Dir.glob(pattern) }
     assert_true(Dir.glob(pattern).size > 0)
   end
 
-  test 'glob handles multiple strings' do
+  test "glob handles multiple strings" do
     pattern1 = "C:\\Program Files\\Common Files\\System\\*.dll"
     pattern2 = "C:\\Windows\\*.exe"
-    assert_nothing_raised{ Dir.glob([pattern1, pattern2]) }
+    assert_nothing_raised { Dir.glob([pattern1, pattern2]) }
     assert_true(Dir.glob([pattern1, pattern2]).size > 0)
   end
 
-  test 'glob still observes flags' do
-    assert_nothing_raised{ Dir.glob('*', File::FNM_DOTMATCH ) }
-    assert_true(Dir.glob('*', File::FNM_DOTMATCH).include?('.'))
+  test "glob still observes flags" do
+    assert_nothing_raised { Dir.glob("*", File::FNM_DOTMATCH ) }
+    assert_true(Dir.glob("*", File::FNM_DOTMATCH).include?("."))
   end
 
-  test 'glob still honors block' do
+  test "glob still honors block" do
     array = []
-    assert_nothing_raised{ Dir.glob('*', File::FNM_DOTMATCH ){ |m| array << m } }
-    assert_true(array.include?('.'))
+    assert_nothing_raised { Dir.glob("*", File::FNM_DOTMATCH ) { |m| array << m } }
+    assert_true(array.include?("."))
   end
 
-  test 'glob handles Pathname objects' do
+  test "glob handles Pathname objects" do
     pattern1 = Pathname.new("C:\\Program Files\\Common Files\\System\\*.dll")
     pattern2 = Pathname.new("C:\\Windows\\*.exe")
-    assert_nothing_raised{ Dir.glob([pattern1, pattern2]) }
+    assert_nothing_raised { Dir.glob([pattern1, pattern2]) }
     assert_true(Dir.glob([pattern1, pattern2]).size > 0)
   end
 
   test "glob requires a stringy argument" do
-    assert_raise(TypeError){ Dir.glob(nil) }
+    assert_raise(TypeError) { Dir.glob(nil) }
   end
 
-  test 'ref handles backslashes' do
+  test "ref handles backslashes" do
     pattern = "C:\\Program Files\\Common Files\\System\\*.dll"
-    assert_nothing_raised{ Dir[pattern] }
+    assert_nothing_raised { Dir[pattern] }
     assert_true(Dir[pattern].size > 0)
   end
 
-  test 'ref handles multiple arguments' do
+  test "ref handles multiple arguments" do
     pattern1 = "C:\\Program Files\\Common Files\\System\\*.dll"
     pattern2 = "C:\\Windows\\*.exe"
-    assert_nothing_raised{ Dir[pattern1, pattern2] }
+    assert_nothing_raised { Dir[pattern1, pattern2] }
     assert_true(Dir[pattern1, pattern2].size > 0)
   end
 
-  test 'ref handles pathname arguments' do
+  test "ref handles pathname arguments" do
     pattern1 = Pathname.new("C:\\Program Files\\Common Files\\System\\*.dll")
     pattern2 = Pathname.new("C:\\Windows\\*.exe")
-    assert_nothing_raised{ Dir[pattern1, pattern2] }
+    assert_nothing_raised { Dir[pattern1, pattern2] }
     assert_true(Dir[pattern1, pattern2].size > 0)
   end
 
@@ -89,63 +89,63 @@ class TC_Win32_Dir < Test::Unit::TestCase
   end
 
   test "create_junction works as expected with ascii characters" do
-    assert_nothing_raised{ Dir.create_junction(@ascii_to, @@from) }
+    assert_nothing_raised { Dir.create_junction(@ascii_to, @@from) }
     assert_true(File.exist?(@ascii_to))
-    File.open(@test_file, 'w'){ |fh| fh.puts "Hello World" }
+    File.open(@test_file, "w") { |fh| fh.puts "Hello World" }
     assert_equal(Dir.entries(@@from), Dir.entries(@ascii_to))
   end
 
   test "create_junction works as expected with unicode characters" do
-    assert_nothing_raised{ Dir.create_junction(@unicode_to, @@from) }
+    assert_nothing_raised { Dir.create_junction(@unicode_to, @@from) }
     assert_true(File.exist?(@unicode_to))
-    File.open(@test_file, 'w'){ |fh| fh.puts "Hello World" }
+    File.open(@test_file, "w") { |fh| fh.puts "Hello World" }
     assert_equal(Dir.entries(@@from), Dir.entries(@unicode_to))
   end
 
   test "create_junction works as expected with pathname objects" do
-    assert_nothing_raised{ Dir.create_junction(Pathname.new(@ascii_to), Pathname.new(@@from)) }
+    assert_nothing_raised { Dir.create_junction(Pathname.new(@ascii_to), Pathname.new(@@from)) }
     assert_true(File.exist?(@ascii_to))
-    File.open(@test_file, 'w'){ |fh| fh.puts "Hello World" }
+    File.open(@test_file, "w") { |fh| fh.puts "Hello World" }
     assert_equal(Dir.entries(@@from), Dir.entries(@ascii_to))
   end
 
   test "create_junction requires stringy arguments" do
-    assert_raise(TypeError){ Dir.create_junction(nil, @@from) }
-    assert_raise(TypeError){ Dir.create_junction(@ascii_to, nil) }
+    assert_raise(TypeError) { Dir.create_junction(nil, @@from) }
+    assert_raise(TypeError) { Dir.create_junction(@ascii_to, nil) }
   end
 
   test "read_junction works as expected with ascii characters" do
-    assert_nothing_raised{ Dir.create_junction(@ascii_to, @@from) }
+    assert_nothing_raised { Dir.create_junction(@ascii_to, @@from) }
     assert_true(File.exist?(@ascii_to))
     assert_equal(Dir.read_junction(@ascii_to), @@from)
   end
 
   test "read_junction works as expected with unicode characters" do
-    assert_nothing_raised{ Dir.create_junction(@unicode_to, @@from) }
+    assert_nothing_raised { Dir.create_junction(@unicode_to, @@from) }
     assert_true(File.exist?(@unicode_to))
     assert_equal(Dir.read_junction(@unicode_to), @@from)
   end
 
   test "read_junction with unicode characters is joinable" do
-    assert_nothing_raised{ Dir.create_junction(@unicode_to, @@from) }
+    assert_nothing_raised { Dir.create_junction(@unicode_to, @@from) }
     assert_true(File.exist?(@unicode_to))
-    assert_nothing_raised{ File.join(Dir.read_junction(@unicode_to), 'foo') }
+    assert_nothing_raised { File.join(Dir.read_junction(@unicode_to), "foo") }
   end
 
   test "read_junction works as expected with pathname objects" do
-    assert_nothing_raised{ Dir.create_junction(Pathname.new(@ascii_to), Pathname.new(@@from)) }
+    assert_nothing_raised { Dir.create_junction(Pathname.new(@ascii_to), Pathname.new(@@from)) }
     assert_true(File.exist?(@ascii_to))
     assert_equal(Dir.read_junction(@ascii_to), @@from)
   end
 
   test "read_junction requires a stringy argument" do
-    assert_raise(TypeError){ Dir.read_junction(nil) }
-    assert_raise(TypeError){ Dir.read_junction([]) }
+    assert_raise(TypeError) { Dir.read_junction(nil) }
+    assert_raise(TypeError) { Dir.read_junction([]) }
   end
 
   test "junction? method returns boolean value" do
     assert_respond_to(Dir, :junction?)
-    assert_nothing_raised{ Dir.create_junction(@ascii_to, @@from) }
+    assert_nothing_raised { Dir.create_junction(@ascii_to, @@from) }
     assert_false(Dir.junction?(@@from))
     assert_true(Dir.junction?(@ascii_to))
     assert_true(Dir.junction?(Pathname.new(@ascii_to)))
@@ -166,7 +166,7 @@ class TC_Win32_Dir < Test::Unit::TestCase
   test "pwd basic functionality" do
     omit_if(@@java)
     assert_respond_to(Dir, :pwd)
-    assert_nothing_raised{ Dir.pwd }
+    assert_nothing_raised { Dir.pwd }
     assert_kind_of(String, Dir.pwd)
   end
 
@@ -446,7 +446,7 @@ class TC_Win32_Dir < Test::Unit::TestCase
 
   test "constants are ascii_compatible?" do
     assert_true(Dir::COMMON_APPDATA.encoding.ascii_compatible?)
-    assert_nothing_raised{ File.join(Dir::COMMON_APPDATA, 'foo') }
+    assert_nothing_raised { File.join(Dir::COMMON_APPDATA, "foo") }
   end
 
   test "ffi functions are private" do

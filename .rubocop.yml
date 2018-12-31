@@ -1,0 +1,12 @@
+Lint/IneffectiveAccessModifier:
+  Exclude:
+    - 'lib/win32/dir.rb'
+
+Lint/UselessAccessModifier:
+  Exclude:
+    - 'lib/win32/dir.rb'
+    - 'lib/win32/dir/constants.rb'
+
+Security/Eval:
+  Exclude:
+    - 'Rakefile'

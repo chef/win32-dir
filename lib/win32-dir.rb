@@ -1,1 +1,1 @@
-require_relative 'win32/dir'
+require_relative "win32/dir"

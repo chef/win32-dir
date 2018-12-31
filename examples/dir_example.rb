@@ -4,7 +4,7 @@
 # Generic test script for general futzing.  Modify as you see fit.
 # You can run this via the 'rake example' task.
 ####################################################################
-require 'win32/dir'
+require "win32/dir"
 
 puts "Admin Tools:\t\t" + Dir::ADMINTOOLS
 puts "Common Admin Tools:\t" + Dir::COMMON_ADMINTOOLS
@@ -20,4 +20,4 @@ puts "Personal:\t\t" + Dir::PERSONAL
 puts "Program Files:\t\t" + Dir::PROGRAM_FILES
 puts "Program Files Common:\t" + Dir::PROGRAM_FILES_COMMON
 puts "System:\t\t\t" + Dir::SYSTEM
-puts "Windows:\t\t" + Dir::WINDOWS 
+puts "Windows:\t\t" + Dir::WINDOWS
