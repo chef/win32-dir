@@ -24,7 +24,7 @@ matrix:
 
 branches:
   only:
-    - ffi
+    - master
 
 bundler_args: --jobs 7 --without docs debug
 

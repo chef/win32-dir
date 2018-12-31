@@ -10,7 +10,7 @@ rubygems:
   - win32-dir
 
 release_branch:
-  - ffi:
+  - master:
     version_constraint: "*"
 
 github:
