@@ -7,9 +7,6 @@ class Dir
   include Dir::Constants
   extend Dir::Functions
 
-  # The version of the win32-dir library.
-  VERSION = "0.6.2"
-
   # CSIDL constants
   csidl = Hash[
     "DESKTOP",                  0x0000,
