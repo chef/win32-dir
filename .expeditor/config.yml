@@ -9,6 +9,10 @@ slack:
 rubygems:
   - win32-dir
 
+release_branch:
+  - ffi:
+    version_constraint: "*"
+
 github:
   # This deletes the GitHub PR branch after successfully merged into the release branch
   delete_branch_on_merge: true
