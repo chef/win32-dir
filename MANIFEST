@@ -1,8 +1,0 @@
-* README
-* MANIFEST
-* CHANGES
-* Rakefile
-* win32-dir.gemspec
-* examples/dir_example.rb
-* lib/win32/dir.rb
-* test/test_win32_dir.rb
