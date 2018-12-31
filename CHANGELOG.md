@@ -2,9 +2,17 @@
 
 # win32-dir Changelog
 
-<!-- latest_release 0.5.1 -->
+<!-- latest_release 0.6.0 -->
+## [win32-dir-0.6.0](https://github.com/chef/win32-dir/tree/win32-dir-0.6.0) (2018-12-31)
+
+#### Merged Pull Requests
+- Require Ruby 2.2 and only ship required libs [#20](https://github.com/chef/win32-dir/pull/20) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 <!-- release_rollup since=0.5.1 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Require Ruby 2.2 and only ship required libs [#20](https://github.com/chef/win32-dir/pull/20) ([tas50](https://github.com/tas50)) <!-- 0.6.0 -->
 <!-- release_rollup -->
 <!-- latest_stable_release -->
 == 0.5.1 - 20-Oct-2015
