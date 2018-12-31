@@ -39,7 +39,6 @@ end
 task :console do
   require "irb"
   require "irb/completion"
-  require "mixlib/archive"
   ARGV.clear
   IRB.start
 end
