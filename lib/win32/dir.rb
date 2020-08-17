@@ -355,7 +355,8 @@ class Dir
     jname = (rdb[:PathBuffer].to_ptr + rdb[:SubstituteNameOffset]).read_string(rdb[:SubstituteNameLength])
     jname = jname.bytes.to_a.pack("C*")
     jname = jname.force_encoding("UTF-16LE")
-    raise "Invalid junction name: #{jname.encode('UTF-8')}" unless jname[0..3] == "\\??\\".encode("UTF-16LE")
+    raise "Invalid junction name: #{jname.encode("UTF-8")}" unless jname[0..3] == "\\??\\".encode("UTF-16LE")
+
     begin
       File.expand_path(jname[4..-1].encode(Encoding.default_external))
     rescue Encoding::UndefinedConversionError
@@ -402,6 +403,7 @@ class Dir
       return arg if arg.is_a?(String)
       return arg.send(:to_str) if arg.respond_to?(:to_str, true) # MRI honors it, even if private
       return arg.to_path if arg.respond_to?(:to_path)
+
       raise TypeError
     end
   end
