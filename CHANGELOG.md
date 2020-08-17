@@ -2,9 +2,17 @@
 
 # win32-dir Changelog
 
+<!-- latest_release 0.6.5 -->
+## [win32-dir-0.6.5](https://github.com/chef/win32-dir/tree/win32-dir-0.6.5) (2020-08-17)
+
+#### Merged Pull Requests
+- Add a super basic test pipeline in buildkite [#26](https://github.com/chef/win32-dir/pull/26) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
-<!-- latest_release -->
-<!-- release_rollup -->
+<!-- release_rollup since=0.5.1 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Add a super basic test pipeline in buildkite [#26](https://github.com/chef/win32-dir/pull/26) ([tas50](https://github.com/tas50)) <!-- 0.6.5 -->
 <!-- release_rollup -->
 <!-- latest_stable_release -->
 ## [win32-dir-0.6.4](https://github.com/chef/win32-dir/tree/win32-dir-0.6.4) (2020-08-17)
