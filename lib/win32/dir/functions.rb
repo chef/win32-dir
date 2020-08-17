@@ -1,10 +1,10 @@
 # Necessary to force JRuby to use the gem, not its builtin version
 if RUBY_PLATFORM == "java"
-  require "rubygems"
+  require "rubygems" unless defined?(Gem)
   gem "ffi"
 end
 
-require "ffi"
+require "ffi" unless defined?(FFI)
 
 module Dir::Functions
   module FFI::Library
