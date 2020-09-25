@@ -78,12 +78,19 @@ class Dir
     elsif SHGetFolderPathW(0, value, 0, 1, buf) == 0 # Default path
       path = buf.strip
     else
-      ptr   = FFI::MemoryPointer.new(:long)
+      ptr   = FFI::MemoryPointer.new(:uint64)
       info  = SHFILEINFO.new
       flags = SHGFI_DISPLAYNAME | SHGFI_PIDL
 
       if SHGetFolderLocation(0, value, 0, 0, ptr) == 0
-        if SHGetFileInfo(ptr.read_long, 0, info, info.size, flags) != 0
+        # Use read_array_of_uint64 for compatibility with JRuby if necessary.
+        if ptr.respond_to?(:read_uint64)
+          res = SHGetFileInfo(ptr.read_uint64, 0, info, info.size, flags)
+        else
+          res = SHGetFileInfo(ptr.read_array_of_uint64(1).first, 0, info, info.size, flags)
+        end
+
+        if res != 0
           path = info[:szDisplayName].to_s
           path.force_encoding(Encoding.default_external)
         end

@@ -27,7 +27,7 @@ module Dir::Functions
 
   attach_pfunc :SHGetFolderPathW, %i{hwnd int handle dword buffer_out}, :dword
   attach_pfunc :SHGetFolderLocation, %i{hwnd int handle dword ptr}, :dword
-  attach_pfunc :SHGetFileInfo, %i{dword dword ptr uint uint}, :dword
+  attach_pfunc :SHGetFileInfo, %i{uint64 dword ptr uint uint}, :dword
 
   ffi_lib :shlwapi
   ffi_convention :stdcall
