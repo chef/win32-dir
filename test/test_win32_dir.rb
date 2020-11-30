@@ -6,9 +6,9 @@
 ###########################################################################
 require "test-unit"
 require "win32/dir"
-require "tmpdir"
-require "fileutils"
-require "pathname"
+require "tmpdir" unless defined?(Dir.mktmpdir)
+require "fileutils" unless defined?(FileUtils)
+require "pathname" unless defined?(Pathname)
 
 class TC_Win32_Dir < Test::Unit::TestCase
   def self.startup

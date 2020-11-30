@@ -227,57 +227,55 @@ class Dir
       end
     end
 
+    # Generic read & write + open existing + reparse point & backup semantics
+    handle = CreateFileW(
+      to_path,
+      GENERIC_READ | GENERIC_WRITE,
+      0,
+      nil,
+      OPEN_EXISTING,
+      FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS,
+      0
+    )
+
+    if handle == INVALID_HANDLE_VALUE
+      raise SystemCallError.new("CreateFileW", FFI.errno)
+    end
+
+    target = "\\??\\".encode("UTF-16LE") + from_path
+
+    rdb = REPARSE_JDATA_BUFFER.new
+    rdb[:ReparseTag] = 2684354563 # IO_REPARSE_TAG_MOUNT_POINT
+    rdb[:ReparseDataLength] = target.bytesize + 12
+    rdb[:Reserved] = 0
+    rdb[:SubstituteNameOffset] = 0
+    rdb[:SubstituteNameLength] = target.bytesize
+    rdb[:PrintNameOffset] = target.bytesize + 2
+    rdb[:PrintNameLength] = 0
+    rdb[:PathBuffer] = target
+
+    bytes = FFI::MemoryPointer.new(:ulong)
+
     begin
-      # Generic read & write + open existing + reparse point & backup semantics
-      handle = CreateFileW(
-        to_path,
-        GENERIC_READ | GENERIC_WRITE,
-        0,
+      bool = DeviceIoControl(
+        handle,
+        CTL_CODE(FILE_DEVICE_FILE_SYSTEM, 41, METHOD_BUFFERED, 0),
+        rdb,
+        rdb[:ReparseDataLength] + rdb.header_size,
         nil,
-        OPEN_EXISTING,
-        FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS,
-        0
+        0,
+        bytes,
+        nil
       )
 
-      if handle == INVALID_HANDLE_VALUE
-        raise SystemCallError.new("CreateFileW", FFI.errno)
+      error = FFI.errno
+
+      unless bool
+        RemoveDirectoryW(to_path)
+        raise SystemCallError.new("DeviceIoControl", error)
       end
-
-      target = "\\??\\".encode("UTF-16LE") + from_path
-
-      rdb = REPARSE_JDATA_BUFFER.new
-      rdb[:ReparseTag] = 2684354563 # IO_REPARSE_TAG_MOUNT_POINT
-      rdb[:ReparseDataLength] = target.bytesize + 12
-      rdb[:Reserved] = 0
-      rdb[:SubstituteNameOffset] = 0
-      rdb[:SubstituteNameLength] = target.bytesize
-      rdb[:PrintNameOffset] = target.bytesize + 2
-      rdb[:PrintNameLength] = 0
-      rdb[:PathBuffer] = target
-
-      bytes = FFI::MemoryPointer.new(:ulong)
-
-      begin
-        bool = DeviceIoControl(
-          handle,
-          CTL_CODE(FILE_DEVICE_FILE_SYSTEM, 41, METHOD_BUFFERED, 0),
-          rdb,
-          rdb[:ReparseDataLength] + rdb.header_size,
-          nil,
-          0,
-          bytes,
-          nil
-        )
-
-        error = FFI.errno
-
-        unless bool
-          RemoveDirectoryW(to_path)
-          raise SystemCallError.new("DeviceIoControl", error)
-        end
-      ensure
-        CloseHandle(handle)
-      end
+    ensure
+      CloseHandle(handle)
     end
 
     self
@@ -308,54 +306,52 @@ class Dir
       junction_path.strip!
     end
 
+    # Generic read & write + open existing + reparse point & backup semantics
+    handle = CreateFileW(
+      junction_path,
+      GENERIC_READ | GENERIC_WRITE,
+      0,
+      nil,
+      OPEN_EXISTING,
+      FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS,
+      0
+    )
+
+    if handle == INVALID_HANDLE_VALUE
+      raise SystemCallError.new("CreateFileW", FFI.errno)
+    end
+
+    rdb = REPARSE_JDATA_BUFFER.new
+    rdb[:ReparseTag] = 0
+    rdb[:ReparseDataLength] = 0
+    rdb[:Reserved] = 0
+    rdb[:SubstituteNameOffset] = 0
+    rdb[:SubstituteNameLength] = 0
+    rdb[:PrintNameOffset] = 0
+    rdb[:PrintNameLength] = 0
+    rdb[:PathBuffer] = ""
+
+    bytes = FFI::MemoryPointer.new(:ulong)
+
     begin
-      # Generic read & write + open existing + reparse point & backup semantics
-      handle = CreateFileW(
-        junction_path,
-        GENERIC_READ | GENERIC_WRITE,
-        0,
+      bool = DeviceIoControl(
+        handle,
+        CTL_CODE(FILE_DEVICE_FILE_SYSTEM, 42, METHOD_BUFFERED, 0),
         nil,
-        OPEN_EXISTING,
-        FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS,
-        0
+        0,
+        rdb,
+        1024,
+        bytes,
+        nil
       )
 
-      if handle == INVALID_HANDLE_VALUE
-        raise SystemCallError.new("CreateFileW", FFI.errno)
+      error = FFI.errno
+
+      unless bool
+        raise SystemCallError.new("DeviceIoControl", error)
       end
-
-      rdb = REPARSE_JDATA_BUFFER.new
-      rdb[:ReparseTag] = 0
-      rdb[:ReparseDataLength] = 0
-      rdb[:Reserved] = 0
-      rdb[:SubstituteNameOffset] = 0
-      rdb[:SubstituteNameLength] = 0
-      rdb[:PrintNameOffset] = 0
-      rdb[:PrintNameLength] = 0
-      rdb[:PathBuffer] = ""
-
-      bytes = FFI::MemoryPointer.new(:ulong)
-
-      begin
-        bool = DeviceIoControl(
-          handle,
-          CTL_CODE(FILE_DEVICE_FILE_SYSTEM, 42, METHOD_BUFFERED, 0),
-          nil,
-          0,
-          rdb,
-          1024,
-          bytes,
-          nil
-        )
-
-        error = FFI.errno
-
-        unless bool
-          raise SystemCallError.new("DeviceIoControl", error)
-        end
-      ensure
-        CloseHandle(handle)
-      end
+    ensure
+      CloseHandle(handle)
     end
 
     # MSDN says print and substitute names can be in any order

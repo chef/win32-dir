@@ -10,9 +10,6 @@ slack:
 rubygems:
   - win32-dir
 
-release_branch:
-  - master:
-    version_constraint: "*"
 
 github:
   # This deletes the GitHub PR branch after successfully merged into the release branch
@@ -25,6 +22,12 @@ github:
   # allow bumping the major release via label
   major_bump_labels:
     - "Expeditor: Bump Version Major"
+  # Which Github branches to build releases from, and what versions
+  # (as determined by the value in the VERSION file) those branches are responsible
+  # for building.
+  release_branch:
+    - master:
+        version_constraint: "*"
 
 changelog:
   rollup_header: Changes not yet released to rubygems.org

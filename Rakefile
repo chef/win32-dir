@@ -6,7 +6,7 @@ CLEAN.include("**/*.gem", "**/*.log")
 namespace "gem" do
   desc "Build the win32-dir gem"
   task create: [:clean] do
-    require "rubygems/package"
+    require "rubygems/package" unless defined?(Gem::Package)
     Dir["*.gem"].each { |f| File.delete(f) }
     spec = eval(IO.read("win32-dir.gemspec"))
     Gem::Package.build(spec)
@@ -30,7 +30,7 @@ Rake::TestTask.new do |t|
 end
 
 begin
-  require "yard"
+  require "yard" unless defined?(YARD)
   YARD::Rake::YardocTask.new(:docs)
 rescue LoadError
   puts "yard is not available. bundle install first to make sure all dependencies are installed."
