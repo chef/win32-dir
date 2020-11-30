@@ -17,4 +17,4 @@ steps:
   expeditor:
     executor:
       docker:
-        image: ruby:2.4-buster
+        image: ruby:2.5-buster
