@@ -2,9 +2,17 @@
 
 # win32-dir Changelog
 
+<!-- latest_release 0.7.2 -->
+## [win32-dir-0.7.2](https://github.com/chef/win32-dir/tree/win32-dir-0.7.2) (2020-11-30)
+
+#### Merged Pull Requests
+- Fix version management in expeditor / cache test runs [#30](https://github.com/chef/win32-dir/pull/30) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
-<!-- latest_release -->
-<!-- release_rollup -->
+<!-- release_rollup since=0.5.1 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Fix version management in expeditor / cache test runs [#30](https://github.com/chef/win32-dir/pull/30) ([tas50](https://github.com/tas50)) <!-- 0.7.2 -->
 <!-- release_rollup -->
 <!-- latest_stable_release -->
 ## [win32-dir-0.7.1](https://github.com/chef/win32-dir/tree/win32-dir-0.7.1) (2020-11-30)
