@@ -2,16 +2,17 @@
 
 # win32-dir Changelog
 
-<!-- latest_release 0.7.0 -->
-## [win32-dir-0.7.0](https://github.com/chef/win32-dir/tree/win32-dir-0.7.0) (2020-08-17)
+<!-- latest_release 0.7.1 -->
+## [win32-dir-0.7.1](https://github.com/chef/win32-dir/tree/win32-dir-0.7.1) (2020-11-30)
 
 #### Merged Pull Requests
-- Require Ruby 2.4 or later [#27](https://github.com/chef/win32-dir/pull/27) ([tas50](https://github.com/tas50))
+- Fix segfault if high-entropy 64-bit ASLR is enabled [#28](https://github.com/chef/win32-dir/pull/28) ([GabrielNagy](https://github.com/GabrielNagy))
 <!-- latest_release -->
 <!-- release_rollup since=0.5.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fix segfault if high-entropy 64-bit ASLR is enabled [#28](https://github.com/chef/win32-dir/pull/28) ([GabrielNagy](https://github.com/GabrielNagy)) <!-- 0.7.1 -->
 - Require Ruby 2.4 or later [#27](https://github.com/chef/win32-dir/pull/27) ([tas50](https://github.com/tas50)) <!-- 0.7.0 -->
 - Add a super basic test pipeline in buildkite [#26](https://github.com/chef/win32-dir/pull/26) ([tas50](https://github.com/tas50)) <!-- 0.6.5 -->
 <!-- release_rollup -->
