@@ -2,9 +2,17 @@
 
 # win32-dir Changelog
 
+<!-- latest_release 0.7.3 -->
+## [win32-dir-0.7.3](https://github.com/chef/win32-dir/tree/win32-dir-0.7.3) (2021-06-25)
+
+#### Merged Pull Requests
+- Upgrade to GitHub-native Dependabot [#31](https://github.com/chef/win32-dir/pull/31) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
 <!-- latest_release -->
-<!-- latest_release -->
-<!-- release_rollup -->
+<!-- release_rollup since=0.7.2 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Upgrade to GitHub-native Dependabot [#31](https://github.com/chef/win32-dir/pull/31) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 0.7.3 -->
 <!-- release_rollup -->
 <!-- latest_stable_release -->
 ## [win32-dir-0.7.2](https://github.com/chef/win32-dir/tree/win32-dir-0.7.2) (2020-11-30)
